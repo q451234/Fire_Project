@@ -1,0 +1,20 @@
+server:
+  port: 9999
+
+spring:
+  datasource:
+    username: root
+    password: q451234@
+    url: jdbc:mysql:///fire
+
+logging:
+  config: classpath:logback-spring.xml
+
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+  type-aliases-package: com.sensor.*.entity
+
