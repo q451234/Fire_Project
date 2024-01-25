@@ -1,424 +1,74 @@
-<!-- <template>
-  
+<template>
   <div>
-      <el-card id="search">
-          <el-row>
-              <el-col :span="20">
-                <el-select v-model="searchModel.projectName" placeholder="项目" clearable @change="cleanBoxCd" >
-                  <el-option
-                    v-for="item in projectNameOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                    :disabled="item.disabled">
-                  </el-option>
-                </el-select>
-                <el-select v-model="searchModel.sensorType" placeholder="传感器类型" clearable @change="selectBox">
-                    <el-option
-                      v-for="item in sensorTypeOptions[searchModel.projectName]"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                  <el-select v-model="searchModel.boxName" clearable placeholder="采集仪">
-                    <el-option                  
-                      v-for="item in boxSelect"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-              <el-select v-model="searchModel.fieldValue" clearable placeholder="请选择">
-                  <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                  </el-option>
-              </el-select>
+    <el-upload
+      class="upload-demo"
+      action="https://jsonplaceholder.typicode.com/posts/"
+      :on-preview="handlePreview"
+      :on-change="onChange"
+      :file-list = "fileList"
+      :limit = 3
+      :http-request="picUpload"
+      list-type="picture">
+      <el-button size="small" type="primary">点击上传</el-button>
+    </el-upload> 
 
-              <el-date-picker
-                  v-model="searchModel.dateValue"
-                  type="datetimerange"
-                  :picker-options="pickerOptions"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  >
-              </el-date-picker>
-              </el-col>
+    <el-button size="small" type="success" @click="segment">熔化区分割</el-button>
 
-              <el-col :span="4" align="right">
-              <el-button
-                  @click="getSensorDataDrawListDistribution"
-                  type="primary"
-                  round
-                  icon="el-icon-search"
-                  >查询</el-button>        
-              </el-col>
-          </el-row>
-      </el-card>
-      <el-card>
-          <div :id="id" :class="className" :style="{width:width,height:height,margin:margin}">
-          </div>            
-      </el-card>
+    <el-dialog :visible.sync="originVisible">
+        <img width="100%" :src="originImageUrl" alt="">
+    </el-dialog>
 
+    <el-dialog :visible.sync="segVisible">
+        <img width="100%" :src="require('../../../../Fire/Fire-py/res.jpg')" alt="">
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import echarts from 'echarts'
-import sensorApi from "@/api/sensorManage";
+import imgApi from "@/api/imgManage";
 
 export default {
-  props: {
-    className: {
-      type: String,
-      default: 'chart'
+    data() {
+      return {
+        fileList : [],
+        originImageUrl: '',
+        originVisible: false,
+        segVisible: false,
+      };
     },
-    id: {
-      type: String,
-      default: 'chart'
-    },
-    width: {
-      type: String,
-      default: '100%'
-    },
-    height: {
-      type: String,
-      default: '600px'
-    },
-    margin:{
-      type: String,
-      default: "auto"
-    }
-  },
-  data() {
-    return {
-      projectNameOptions:[],
-      sensorTypeOptions:{},
-      boxNameOptions:{},
-      boxSelect:[],
-
-      x_series :[],
-      series:[],
-      unit:'',
-
-      chart: null,
-      fieldName : '监测分布曲线图',
-      searchModel: {
-        pageNo: 1,
-        pageSize: 10,
-        dateValue: [new Date(2023, 1, 1, 0, 0), new Date(2023, 3, 1, 0, 0)],
-        fieldValue: 'mData',
-        projectName:"1标",
-        boxName:"CJ134080",
-        sensorType:"单点沉降计(mm)"
+    methods: {
+      segment() {
+        this.$message("处理中")
+        imgApi.seg().then(response => {
+          this.$message({
+            message: response.message,
+            type: 'success'
+          });
+          this.segVisible = true;
+        })
       },
-      colorMap: {
-        'ad':{
-          color: 'rgb(255,255,0)',
-          borderColor: 'rgba(255,255,0,0.2)',             
-        },
-        'mData':{           
-          color: 'rgb(137,189,27)',
-          borderColor: 'rgba(137,189,2,0.27)'
-        },
-        'calculatedata':{
-          color: 'rgb(0,136,212)',
-          borderColor: 'rgba(0,136,212,0.2)',             
-        },
-        'substand':{
-          color: 'rgb(219,50,51)',
-          borderColor: 'rgba(219,50,51,0.2)',           
-        },
-        'temperature':{
-          color: 'rgb(255,128,0)',
-          borderColor: 'rgba(255,128,0,0.2)',            
+      onChange(file, fileList) {
+        if (fileList.length > 0) {
+          this.fileList = [file]//这一步，是 展示最后一次选择文件
         }
       },
 
-      sensorDataList: [],
-      options: [{
-        value: 'mData',
-        label: '测量值'
-      }, {
-        value: 'calculatedata',
-        label: '计算值'
-      }, {
-        value: 'substand',
-        label: '变化量'
-      }],
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-            picker.$emit('pick', [start, end]);
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date();
-            const start = new Date();
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-            picker.$emit('pick', [start, end]);
-          }
-        }]
+      handlePreview(file) {
+        this.originImageUrl = file.url;
+        this.originVisible = true;
+      },
+      picUpload(f) {
+        let params = new FormData()
+        // //注意在这里一个坑f.file
+        params.append("file", f.file);
+        imgApi.upload(params).then(response => {
+          this.$message({
+            message: response.message,
+            type: 'success'
+          });
+        })
       }
     }
-  },
-  mounted() {
-    this.resizeChart = ()=>{
-      this.chart = echarts.init(document.getElementById(this.id)).resize();
-    };
-    window.addEventListener('resize',this.resizeChart);
-  },
-  beforeDestroy() {
-    if (!this.chart) {
-      return
-    }
-    this.chart.dispose()
-    this.chart = null
-    window.removeEventListener('resize', this.resizeChart);
-    this.resizeChart = null
-  },
-  created() {
-    this.getSensorDataDrawListDistribution(false);
-    this.getNavigateDistribution();
-  },
-  methods: {
-    createSeries(){
-      this.series = [];
-        
-      let timeList = Object.keys(this.sensorDataList.distributionMap);
-      
-      for(var i = 0; i < timeList.length; i++){
-
-        let r = Math.round(Math.random()*255);
-        let g = Math.round(Math.random()*255);
-        let b = Math.round(Math.random()*255);
-
-        let seriesItem = {
-          name: timeList[i],
-          type: 'line',
-          smooth: true,
-          symbol: 'circle',
-          symbolSize: 5,
-          showSymbol: false,
-          lineStyle: {
-            normal: {
-              width: 1
-            }
-          },
-          itemStyle: {
-            normal: {
-              color: 'rgb(' + r + ',' + g + ',' + b + ')',
-              borderColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 0.2 +')',
-              borderWidth: 12
-            }
-          },
-          data: []
-        };
-
-        let seriesData = [];
-        for(var j = 0; j < this.sensorDataList.cdNameList.length; j++){
-          seriesData[j] = this.sensorDataList.distributionMap[timeList[i]][this.sensorDataList.cdNameList[j]];
-        }
-        
-        seriesItem.data = [null].concat(seriesData).concat([null]);
-        this.series.push(seriesItem);
-      }
-
-      for(var j = 0; j < this.sensorDataList.cdNameList.length; j++){
-        let n = this.sensorDataList.cdNameList[j] + "";
-        this.x_series.push(n.substring(n.indexOf("(") + 1 ,n.indexOf(")")));
-      }
-    },
-    selectBox(clean = true){
-      this.boxSelect = this.boxNameOptions[this.searchModel.projectName][this.searchModel.sensorType]
-      if(clean){
-        this.searchModel.boxName = '';        
-      }
-    },
-    cleanBoxCd(){
-      this.searchModel.sensorType = '';
-      this.searchModel.boxName = '';
-    },
-    getNavigateDistribution(){
-      sensorApi.getNavigateDistribution().then((response) =>{
-        let navigate = response.data.navigate;
-
-        let prolist = Object.keys(navigate);
-        prolist.sort();
-        for(var i = 0; i < prolist.length; i++){
-          let proOpt = this.createOptions(Object.keys(navigate[prolist[i]]))
-          this.sensorTypeOptions[prolist[i]] = proOpt;
-
-          let pop = {};
-          pop.value = prolist[i];
-          this.projectNameOptions.push(pop);
-        } 
- 
-        let boxNameMap = navigate;
-        for(let key in boxNameMap){
-          for(let box in boxNameMap[key]){
-            boxNameMap[key][box].sort()
-            for(var i = 0; i < boxNameMap[key][box].length; i++){
-              boxNameMap[key][box][i] = {value: boxNameMap[key][box][i]}
-            }
-          }
-        } 
-        
-        let unauthorized = response.data.unauthorized;
-        for(var i = 0; i < unauthorized.length; i++){
-          unauthorized[i] = {value: unauthorized[i], disabled: true};
-        }
-        this.projectNameOptions = this.projectNameOptions.concat(unauthorized);
-
-        this.boxNameOptions = boxNameMap;
-        this.selectBox(false);
-      })
-    },
-    createOptions(optionsList){
-      optionsList.sort();
-      let res = [];
-      for(var i = 0; i < optionsList.length; i++){
-        let optionsDic = {};
-        optionsDic.value = optionsList[i]
-        res.push(optionsDic);
-      }
-
-      return res;
-    },
-    getSensorDataDrawListDistribution(flag = true) {
-      if(this.searchModel.fieldName == "" || this.searchModel.projectName == "" ||
-          this.searchModel.sensorType == "" || this.searchModel.fieldValue == "" ||
-          this.searchModel.dateValue == null || this.searchModel.dateValue.length < 2){
-            this.$message({
-              message:  "请完善查询条件",
-              type: 'error'
-            });
-            this.chart = echarts.init(document.getElementById(this.id));
-            this.chart.clear();
-            return 0;
-      }
-      sensorApi.getSensorDataDrawListDistribution(this.searchModel, flag).then((response) => {
-          this.sensorDataList = response.data;
-
-          let unit = this.searchModel.sensorType;
-          this.unit = unit.substring(unit.indexOf("(") + 1 ,unit.indexOf(")"));
-
-          this.chart = null;
-          this.createSeries();
-
-          this.unit = this.sensorDataList.fieldName + '(' + this.unit + ')';
-          this.initChart();
-
-          this.x_series = []
-          if(flag){
-            this.$message({
-              message: response.message,
-              type: 'success'
-            });
-          }
-      });        
-    },
-  
-    initChart() {
-      this.chart = echarts.init(document.getElementById(this.id));
-      this.chart.clear();
-      this.chart = echarts.init(document.getElementById(this.id));
-
-      this.chart.setOption({
-        backgroundColor: '#394056',
-        title: {
-          top: 20,
-          text: this.fieldName,
-          textStyle: {
-            fontWeight: 'normal',
-            fontSize: 16,
-            color: '#F1F1F3'
-          },
-          left: '1%'
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            lineStyle: {
-              color: 'rgb(255,255,255)'
-            }
-          }
-        },
-        legend: {
-          top: 20,
-          icon: 'rect',
-          itemWidth: 14,
-          itemHeight: 5,
-          itemGap: 13,
-          data: [this.fieldName],
-          right: '4%',
-          textStyle: {
-            fontSize: 12,
-            color: 'rgb(255,255,255)'
-          }
-        },
-        grid: {
-          top: 100,
-          left: '2%',
-          right: '2%',
-          bottom: '2%',
-          containLabel: true
-        },
-        xAxis: [{
-          type: 'category',
-          boundaryGap: false,
-          axisLine: {
-            lineStyle: {
-              color: 'rgb(255,255,255)'
-            }
-          },
-          data: [""].concat(this.x_series).concat([""])
-        }],
-        yAxis: [{
-          type: 'value',
-          name: this.unit,
-          min: this.sensorDataList.min,
-          max: this.sensorDataList.max,
-          axisTick: {
-            show: false
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgb(255,255,255)'
-            }
-          },
-          axisLabel: {
-            margin: 10,
-            textStyle: {
-              fontSize: 14
-            }
-          },
-          splitLine: {
-            lineStyle: {
-              color: 'rgb(255,255,255)'
-            }
-          }
-        }],
-        series : this.series 
-      })
-    }
-  }
 }
-</script> -->
+
+</script>

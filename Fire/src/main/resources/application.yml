@@ -6,6 +6,12 @@ spring:
     username: root
     password: q451234@
     url: jdbc:mysql:///fire
+  mvc:
+  servlet:
+    multipart:
+      max-file-size: 10MB        # 设置单个文件最大大小为10MB
+      max-request-size: 100MB    # 设置多个文件大小为100MB
+
 
 logging:
   config: classpath:logback-spring.xml
