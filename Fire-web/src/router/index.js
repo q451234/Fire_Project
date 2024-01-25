@@ -51,14 +51,14 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/analysis/process'),
-      meta: { title: '首页', icon: 'dashboard' ,affix: true}
+      meta: { title: '特征提取分析', icon: 'dashboard' ,affix: true}
     }]
   },
 
   {
     path: '/info',
     component: Layout,
-    hidden: true,
+    // hidden: true,
     redirect: '/info',
     children: [{
       path: 'info',
