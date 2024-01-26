@@ -26,9 +26,9 @@
 
     <el-dialog :visible.sync="segVisible" style="top:-100px">
       <div @mousewheel="bbimg(this)" class = "img-display">
-        <div class="setting_box img-footer">
-          <div @click="rotate()">旋转</div>
-          <div @click="imgOut()">还原</div>
+        <div class="img-footer">
+          <el-button @click="rotate()" type="info">旋转</el-button>
+          <el-button @click="imgOut()" type="info">还原</el-button>
 			  </div>
         <img width="100%" :src="require('../../../../Fire/Fire-py/res.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
@@ -36,9 +36,10 @@
 
     <el-dialog :visible.sync="cavityVisible" style="top:-100px">
       <div @mousewheel="bbimg(this)" class = "img-display">
-        <div class="setting_box img-footer">
-          <div @click="rotate()">旋转</div>
-          <div @click="imgOut()">还原</div>
+        <div class="img-footer">
+          <el-button @click="rotate()" type="info">旋转</el-button>
+          <el-button @click="imgOut()" type="info">还原</el-button>
+          <el-button @click="imgOut()" type="info">导出特征</el-button>
 			  </div>
         <img width="100%" :src="require('../../../../Fire/Fire-py/cavity_vis.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
@@ -59,6 +60,8 @@ export default {
 
         segVisible: false,
         cavityVisible: false,
+
+        ifSeg:false,
 
 
         deg: 0,
@@ -83,27 +86,44 @@ export default {
             type: 'success'
           });
           this.segVisible = true;
+          this.ifSeg = true
         })
       },
       cavity() {
         this.$message("处理中")
-        imgApi.cavity().then(response => {
-          this.$message({
-            message: response.message,
-            type: 'success'
-          });
-          this.cavityVisible = true;
-        })
+        if(!this.ifSeg){
+          imgApi.seg().then(response => {
+            imgApi.cavity().then(response => {
+              this.$message({
+                message: response.message,
+                type: 'success'
+              });
+              this.cavityVisible = true;
+            })
+          })
+        }else{
+          imgApi.cavity().then(response => {
+            this.$message({
+              message: response.message,
+              type: 'success'
+            });
+            this.cavityVisible = true;
+            console.log(response)
+          })          
+        }
+        this.ifSeg = true
       },
 
 
       onChange(file, fileList) {
         if (fileList.length > 0) {
           this.fileList = [file]//这一步，是 展示最后一次选择文件
+          this.ifSeg = false
         }
       },
       onRemove(file, fileList){
         this.showButton = false
+        this.ifSeg = false
       },
       handlePreview(file) {
         this.originImageUrl = file.url;
@@ -183,6 +203,7 @@ export default {
     display: flex;
 		align-content: center;
 		justify-content: center;
+    z-index: 10;
 	}
   
   .img-display {
@@ -190,19 +211,9 @@ export default {
 		align-content: center;
 		justify-content: center;
 	}
-
-  .img-footer div {
-		background-color: #2696ee;
-		padding: 10px 50px;
-		color: #fff;
-		margin: -10px 100px;
-		cursor: pointer;
-		border-radius: 10px;
-    z-index: 10;
-	}
   .imgclass {
 		cursor: move;
     position: absolute;
-    margin-top: 50px;
+    margin-top: 70px;
 	}
 </style>
