@@ -14,4 +14,10 @@ export default{
       method: 'get',
     });
   },
+  cavity(){
+    return request({
+      url: '/img/cavity',
+      method: 'get',
+    });
+  },
 }

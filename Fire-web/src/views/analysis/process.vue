@@ -15,7 +15,7 @@
 
     <div>
       <el-button n v-if = "showButton" size="medium" type="success" @click="segment">熔化区分割</el-button>
-      <el-button n v-if = "showButton" size="medium" type="success" @click="segment">孔洞提取</el-button>
+      <el-button n v-if = "showButton" size="medium" type="success" @click="cavity">孔洞提取</el-button>
       <el-button n v-if = "showButton" size="medium" type="success" @click="segment">晶粒</el-button>
     </div>
 
@@ -25,6 +25,16 @@
     </el-dialog>
 
     <el-dialog :visible.sync="segVisible" style="top:-100px">
+      <div @mousewheel="bbimg(this)" class = "img-display">
+        <div class="setting_box img-footer">
+          <div @click="rotate()">旋转</div>
+          <div @click="imgOut()">还原</div>
+			  </div>
+        <img width="100%" :src="require('../../../../Fire/Fire-py/res.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
+      </div>
+    </el-dialog>
+
+    <el-dialog :visible.sync="cavityVisible" style="top:-100px">
       <div @mousewheel="bbimg(this)" class = "img-display">
         <div class="setting_box img-footer">
           <div @click="rotate()">旋转</div>
@@ -45,8 +55,10 @@ export default {
         fileList : [],
         originImageUrl: '',
         originVisible: false,
-        segVisible: false,
         showButton: false,
+
+        segVisible: false,
+        cavityVisible: false,
 
 
         deg: 0,
@@ -73,6 +85,18 @@ export default {
           this.segVisible = true;
         })
       },
+      cavity() {
+        this.$message("处理中")
+        imgApi.cavity().then(response => {
+          this.$message({
+            message: response.message,
+            type: 'success'
+          });
+          this.cavityVisible = true;
+        })
+      },
+
+
       onChange(file, fileList) {
         if (fileList.length > 0) {
           this.fileList = [file]//这一步，是 展示最后一次选择文件
@@ -95,7 +119,6 @@ export default {
             type: 'success'
           });
         })
-
         this.showButton = true
       },
 
