@@ -40,7 +40,7 @@
           <div @click="rotate()">旋转</div>
           <div @click="imgOut()">还原</div>
 			  </div>
-        <img width="100%" :src="require('../../../../Fire/Fire-py/res.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
+        <img width="100%" :src="require('../../../../Fire/Fire-py/cavity_vis.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
     </el-dialog>
   </div>

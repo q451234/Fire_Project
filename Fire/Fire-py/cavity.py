@@ -11,13 +11,13 @@ def draw(img, out):
     id = 1
     for idx in range(len(contours)):
         contour = contours[idx]
-        M = cv2.moments(contour)
-        cx = int(M['m10']/M['m00']) # 求x坐标
-        cy = int(M['m01']/M['m00']) # 求y坐标
-
         area = cv2.contourArea(contour)
 
         if(area > 2):
+            M = cv2.moments(contour)
+            cx = int(M['m10']/M['m00']) # 求x坐标
+            cy = int(M['m01']/M['m00']) # 求y坐标
+            
             cv2.drawContours(i, contours, idx, (0,255,0), 12)
             cv2.putText(i, str(id), (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 0, 255), 5)
             id = id + 1
