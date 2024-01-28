@@ -16,7 +16,13 @@ export default{
   },
   cavity(){
     return request({
-      url: '/img/cavity',
+      url: '/cavity/seg',
+      method: 'get',
+    });
+  },
+  exportCavity(){
+    return request({
+      url: '/cavity/seg',
       method: 'get',
     });
   },
