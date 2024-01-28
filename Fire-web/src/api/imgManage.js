@@ -22,7 +22,7 @@ export default{
   },
   exportCavity(){
     return request({
-      url: '/cavity/seg',
+      url: '/cavity/export',
       method: 'get',
     });
   },

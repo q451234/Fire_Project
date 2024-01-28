@@ -121,7 +121,7 @@ export default {
       },
       downloadFile(fileName) {
         const fileUrl = '../../../../Fire/Fire-py/' + fileName; // 文件的URL地址
-        this.$download(fileUrl, fileName);
+        window.open(fileUrl);
       },
 
 
