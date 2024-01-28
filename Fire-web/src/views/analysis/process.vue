@@ -10,13 +10,13 @@
       :limit = 3
       :http-request="picUpload"
       list-type="picture">
-      <el-button size="medium" type="primary">点击上传</el-button>
+      <el-button size="medium" type="primary" icon="el-icon-upload2">点击上传</el-button>
     </el-upload> 
 
     <div>
-      <el-button n v-if = "showButton" size="medium" type="success" @click="segment">熔化区分割</el-button>
-      <el-button n v-if = "showButton" size="medium" type="success" @click="cavity">孔洞提取</el-button>
-      <el-button n v-if = "showButton" size="medium" type="success" @click="segment">晶粒</el-button>
+      <el-button n v-if = "showButton" size="medium" type="success" @click="segment" icon = "el-icon-scissors">熔化区分割</el-button>
+      <el-button n v-if = "showButton" size="medium" type="success" @click="cavity" icon = "el-icon-thumb">孔洞提取</el-button>
+      <el-button n v-if = "showButton" size="medium" type="success" @click="segment" icon = "el-icon-crop">晶粒提取</el-button>
     </div>
 
 
@@ -27,8 +27,8 @@
     <el-dialog :visible.sync="segVisible" style="top:-100px">
       <div @mousewheel="bbimg(this)" class = "img-display">
         <div class="img-footer">
-          <el-button @click="rotate()" type="info">旋转</el-button>
-          <el-button @click="imgOut()" type="info">还原</el-button>
+          <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
+          <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
 			  </div>
         <img width="100%" :src="require('../../../../Fire/Fire-py/res.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
@@ -37,9 +37,9 @@
     <el-dialog :visible.sync="cavityVisible" style="top:-100px">
       <div @mousewheel="bbimg(this)" class = "img-display">
         <div class="img-footer">
-          <el-button @click="rotate()" type="info">旋转</el-button>
-          <el-button @click="imgOut()" type="info">还原</el-button>
-          <el-button type="text" icon="el-icon-download" @click="exportCavity()">导出特征</el-button>
+          <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
+          <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
+          <el-button icon="el-icon-download" @click="exportCavity()" type="info">导出特征</el-button>
 			  </div>
         <img width="100%" :src="require('../../../../Fire/Fire-py/cavity_vis.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
