@@ -27,4 +27,4 @@ for idx in range(len(contours)):
         id = id + 1
 
 data = pd.DataFrame(res)
-data.to_excel("./Fire-py/cavity.xlsx", index=None)
+data.to_excel("../Fire-web/public/cavity.xlsx", index=None)

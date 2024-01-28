@@ -39,7 +39,7 @@
         <div class="img-footer">
           <el-button @click="rotate()" type="info">旋转</el-button>
           <el-button @click="imgOut()" type="info">还原</el-button>
-          <el-button @click="exportCavity()" type="info">导出特征</el-button>
+          <el-button type="text" icon="el-icon-download" @click="exportCavity()">导出特征</el-button>
 			  </div>
         <img width="100%" :src="require('../../../../Fire/Fire-py/cavity_vis.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
@@ -116,15 +116,9 @@ export default {
       exportCavity(){
         this.$message("处理中")
         imgApi.exportCavity().then(response => {
-          this.downloadFile('cavity.xlsx')
+          window.location.href="./cavity.xlsx"
         });
       },
-      downloadFile(fileName) {
-        const fileUrl = '../../../../Fire/Fire-py/' + fileName; // 文件的URL地址
-        window.open(fileUrl);
-      },
-
-
 
       onChange(file, fileList) {
         if (fileList.length > 0) {
