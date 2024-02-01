@@ -26,4 +26,17 @@ export default{
       method: 'get',
     });
   },
+  grain(){
+    return request({
+      url: '/grain/seg',
+      method: 'get',
+    });
+  },
+  corpGrain(box){
+    return request({
+      url: '/grain/corp',
+      method: 'post',
+      data: box
+    });
+  }
 }

@@ -6,7 +6,7 @@ import pandas as pd
 from cellpose.io import logger_setup
 logger_setup()
 
-file = "grain_area.png"
+file = "./Fire-py/grain_area.png"
 img = io.imread(file)
 model = models.Cellpose(gpu=True, model_type='cyto')
 masks, flows, styles, diams = model.eval(img, diameter=None, channels=[0,0])
@@ -64,6 +64,6 @@ for i in range(1, n + 1):
             cv2.putText(img, str(id), (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 255), 1)
     
 
-cv2.imwrite("grain.jpg", img)
+cv2.imwrite("./Fire-py/grain.jpg", img)
 data = pd.DataFrame(res)
-data.to_excel("grain.xlsx", index=None)
+data.to_excel("../Fire-web/public/grain.xlsx", index=None)

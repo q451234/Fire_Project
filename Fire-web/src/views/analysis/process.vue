@@ -16,8 +16,8 @@
     <div>
       <el-button n v-if = "showButton" size="medium" type="success" @click="segment" icon = "el-icon-scissors">熔化区分割</el-button>
       <el-button n v-if = "showButton" size="medium" type="success" @click="cavity" icon = "el-icon-thumb">孔洞提取</el-button>
-      <!-- <el-button n v-if = "showButton" size="medium" type="success" @click="segment" icon = "el-icon-crop">晶粒提取</el-button> -->
-      <el-button size="medium" type="success" @click="grain" icon = "el-icon-thumb">晶粒提取</el-button>
+      <el-button n v-if = "showButton" size="medium" type="success" @click="grain" icon = "el-icon-crop">晶粒提取</el-button>
+      <!-- <el-button size="medium" type="success" @click="grain" icon = "el-icon-thumb">晶粒提取</el-button> -->
     </div>
 
 
@@ -102,7 +102,7 @@
             ></div>
             <img
               style="width: 100%; pointer-events: none;"
-              src="../../assets/bg.jpg"
+              :src="require('../../../../Fire/Fire-py/origin.jpg')"
               alt=""
               @mousedown="isTrue ? null : move"
               ref = "img"
@@ -163,6 +163,13 @@ export default {
     methods: {
       grain(){
         this.grainVisible = true;
+        // imgApi.grain().then(response => {
+        //   this.$message({
+        //     message: response.message,
+        //     type: 'success'
+        //   });
+        //   this.cavityVisible = true;
+        // })
       },
       grain_area(){
         if(this.boxArray.length == 0){
@@ -184,8 +191,15 @@ export default {
           var imgLeft = this.boxArray[0].left / offset;
           var imgWidth = this.boxArray[0].width / offset;
           var imgHeight = this.boxArray[0].height / offset;
-          console.log([imgTop, imgLeft, imgWidth, imgHeight])
-          return [imgTop, imgLeft, imgWidth, imgHeight]  
+          
+          var box = [imgTop, imgLeft, imgWidth, imgHeight]
+          imgApi.corpGrain().then(response => {
+            this.$message({
+              message: response.message,
+              type: 'success',
+              customClass:'mzindex'
+            })
+         })
         }
       },
       reposition(){
@@ -312,7 +326,8 @@ export default {
         imgApi.seg().then(response => {
           this.$message({
             message: response.message,
-            type: 'success'
+            type: 'success',
+            customClass:'mzindex'
           });
           this.segVisible = true;
           this.ifSeg = true
@@ -325,7 +340,8 @@ export default {
             imgApi.cavity().then(response => {
               this.$message({
                 message: response.message,
-                type: 'success'
+                type: 'success',
+                customClass:'mzindex'
               });
               this.cavityVisible = true;
             })
@@ -334,7 +350,8 @@ export default {
           imgApi.cavity().then(response => {
             this.$message({
               message: response.message,
-              type: 'success'
+              type: 'success',
+              customClass:'mzindex'
             });
             this.cavityVisible = true;
             console.log(response)
@@ -370,7 +387,8 @@ export default {
         imgApi.upload(params).then(response => {
           this.$message({
             message: response.message,
-            type: 'success'
+            type: 'success',
+            customClass:'mzindex'
           });
         })
         this.showButton = true
