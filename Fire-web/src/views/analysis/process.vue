@@ -48,13 +48,13 @@
 
     <el-dialog :visible.sync="grainVisible" style="top:-100px">
       <div id="test" style="user-select: none;">
-        <div class="img-footer">
+        <div class="img-footer" style="margin-bottom: 20px;">
           <el-button icon = "el-icon-zoom-in" @click="magnify">放大</el-button>
           <el-button icon = "el-icon-zoom-out" @click="shrink">缩小</el-button>
           <el-button icon = "el-icon-edit" @click="changeMode" v-if="mode">添加</el-button>
           <el-button icon = "el-icon-thumb" @click="changeMode" v-if="!mode">移动</el-button>
           <el-button icon = "el-icon-refresh" @click="reposition">复位</el-button>
-          <el-button icon = "el-icon-crop" @click="grain">截取</el-button>          
+          <el-button icon = "el-icon-crop" @click="grain_area">截取</el-button>          
         </div>
 
         <div class="content">
@@ -148,7 +148,7 @@ export default {
         //grain
         zoom: 1,
         boxArray: [],
-        mode: false,
+        mode: true,
         width: "",
         height: "",
         left: "",
@@ -163,6 +163,8 @@ export default {
     methods: {
       grain(){
         this.grainVisible = true;
+      },
+      grain_area(){
         if(this.boxArray.length == 0){
           this.$message({
               message: "无晶粒区域, 请重新框选",
