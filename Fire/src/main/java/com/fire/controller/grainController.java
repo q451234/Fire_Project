@@ -43,9 +43,32 @@ public class grainController {
     }
 
     @ApiOperation(value = "晶粒区域裁剪")
-    @GetMapping("/corp")
-    public Result<?> corpGrain(@RequestBody List<Integer> box) {
-        log.info(String.valueOf(box.get(0)));
+    @PostMapping("/corp")
+    public Result<?> corpGrain(@RequestBody List<Double> box) {
+        int top = (int) Math.round(box.get(0));
+        int left = (int) Math.round(box.get(1));
+        int width = (int) Math.round(box.get(2));
+        int height = (int) Math.round(box.get(3));
+
+        try {
+            String exe = "D:\\anaconda\\python.exe";
+            String py = "./Fire-py/grain_corp.py";
+
+            Process process = Runtime.getRuntime().exec(exe + " " + py + " " + top + " " + left + " " + width + " " + height);
+            //获取结果的同时设置输入流编码格式"gb2312"
+            InputStreamReader isr = new InputStreamReader(process.getInputStream(),"gb2312");
+            LineNumberReader input = new LineNumberReader(isr);
+
+            String line = null;
+            while ((line = input.readLine()) != null) {
+                log.info(line);
+            }
+            input.close();
+            isr.close();
+            process.waitFor();
+        } catch (InterruptedException | IOException e) {
+            log.info("调用python脚本并读取结果时出错：" + e.getMessage());
+        }
         return Result.success("晶粒区域裁剪成功");
     }
 }

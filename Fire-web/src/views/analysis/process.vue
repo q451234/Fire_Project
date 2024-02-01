@@ -193,7 +193,8 @@ export default {
           var imgHeight = this.boxArray[0].height / offset;
           
           var box = [imgTop, imgLeft, imgWidth, imgHeight]
-          imgApi.corpGrain().then(response => {
+          console.log(box)
+          imgApi.corpGrain(box).then(response => {
             this.$message({
               message: response.message,
               type: 'success',
