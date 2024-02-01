@@ -1,386 +1,255 @@
-<!-- <template>
-  
-    <div>
-        <el-card id="search">
-            <el-row>
-                <el-col :span="20">
-                  <el-select v-model="searchModel.projectName" placeholder="项目" clearable @change="cleanBoxCd" >
-                    <el-option
-                      v-for="item in projectNameOptions"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                      :disabled="item.disabled">
-                    </el-option>
-                  </el-select>
-                    <el-select v-model="searchModel.boxName" clearable placeholder="采集仪">
-                      <el-option                  
-                        v-for="item in boxNameOptions[searchModel.projectName]"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-  
-                <el-date-picker
-                    v-model="searchModel.dateValue"
-                    type="datetimerange"
-                    :picker-options="pickerOptions"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    >
-                </el-date-picker>
-                </el-col>
-  
-                <el-col :span="4" align="right">
-                <el-button
-                    @click="getSensorDataDrawListDistribution"
-                    type="primary"
-                    round
-                    icon="el-icon-search"
-                    >查询</el-button>        
-                </el-col>
-            </el-row>
-        </el-card>
-        <el-card>
-            <div :id="id" :class="className" :style="{width:width,height:height,margin:margin}">
-            </div>            
-        </el-card>
-  
+<template>
+  <div id="test" style="user-select: none;">
+    <!-- <button @click="magnify">放大</button>
+    <button @click="shrink">缩小</button>
+    <button @click="changeMode" v-show="isTrue">添加</button>
+    <button @click="changeMode" v-show="!isTrue">移动</button>
+    <button @click="reposition">复位</button>
+    <button @click="grain">截取</button> -->
+    <el-button icon = "el-icon-zoom-in" @click="magnify">放大</el-button>
+    <el-button icon = "el-icon-zoom-out" @click="shrink">缩小</el-button>
+    <el-button icon = "el-icon-edit" @click="changeMode" v-if="!mode">添加</el-button>
+    <el-button icon = "el-icon-thumb" @click="changeMode" v-if="!mode">移动</el-button>
+    <el-button icon = "el-icon-refresh" @click="reposition">复位</el-button>
+    <el-button icon = "el-icon-crop" @click="grain">截取</el-button>
+ 
+    <div class="content">
+      <div
+        :style="{
+          transform: 'scale(' + zoom + ')',
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+        }"
+        @mousedown="moveMouse"
+        ref = "box"
+      >
+        <div
+          :class="
+            'mark' + index == 'mark' + b_i
+              ? 'mark b_border'
+              : 'mark'
+          "
+          :ref="'mark' + index"
+          @mousedown.stop="move"
+          @click="handelClick(index)"
+          v-for="(item, index) in boxArray"
+          :key="index"
+          :style="{
+            width: item.width + 'px',
+            height: item.height + 'px',
+            position: 'absolute',
+            left: item.left + 'px',
+            top: item.top + 'px',
+            background: 'rgba(43,100,206,0.3)',
+            border: 'none',
+          }"
+        >
+        </div>
+        <div
+          :style="{
+            height: markHeight + 'px',
+            width: markWidth + 'px',
+            top: markTop + 'px',
+            left: markLeft + 'px',
+            position: 'absolute',
+            background: 'rgba(43,100,206,0.3)',
+          }"
+        ></div>
+        <img
+          style="width: 100%; pointer-events: none;"
+          src="../../assets/bg.jpg"
+          alt=""
+          @mousedown="isTrue ? null : move"
+          ref = "img"
+        />
+      </div>
     </div>
-  </template>
-  
-  <script>
-  import echarts from 'echarts'
-  import sensorApi from "@/api/sensorManage";
-  
-  export default {
-    props: {
-      className: {
-        type: String,
-        default: 'chart'
-      },
-      id: {
-        type: String,
-        default: 'chart'
-      },
-      width: {
-        type: String,
-        default: '100%'
-      },
-      height: {
-        type: String,
-        default: '600px'
-      },
-      margin:{
-        type: String,
-        default: "auto"
-      }
-    },
-    data() {
-      return {
-        projectNameOptions:[],
-        boxNameOptions:{},
-  
-        x_series :[],
-        series:[],
-        unit:'',
-  
-        chart: null,
-        fieldName : '测斜位移曲线图',
-        searchModel: {
-          pageNo: 1,
-          pageSize: 10,
-          dateValue: [new Date(2023, 1, 1, 0, 0), new Date(2023, 3, 1, 0, 0)],
-          fieldValue: 'mData',
-          projectName:"2标",
-          boxName:"CJ131490R1",
-          sensorType:"测斜仪(mm)"
-        },
-        colorMap: {
-          'ad':{
-            color: 'rgb(255,255,0)',
-            borderColor: 'rgba(255,255,0,0.2)',             
-          },
-          'mData':{           
-            color: 'rgb(137,189,27)',
-            borderColor: 'rgba(137,189,2,0.27)'
-          },
-          'calculatedata':{
-            color: 'rgb(0,136,212)',
-            borderColor: 'rgba(0,136,212,0.2)',             
-          },
-          'substand':{
-            color: 'rgb(219,50,51)',
-            borderColor: 'rgba(219,50,51,0.2)',           
-          },
-          'temperature':{
-            color: 'rgb(255,128,0)',
-            borderColor: 'rgba(255,128,0,0.2)',            
-          }
-        },
-  
-        sensorDataList: [],
-        options: [{
-          value: 'mData',
-          label: '测量值'
-        }, {
-          value: 'calculatedata',
-          label: '计算值'
-        }, {
-          value: 'substand',
-          label: '变化量'
-        }],
-        pickerOptions: {
-          shortcuts: [{
-            text: '最近一周',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近一个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit('pick', [start, end]);
-            }
-          }, {
-            text: '最近三个月',
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit('pick', [start, end]);
-            }
-          }]
-        }
-      }
-    },
-    mounted() {
-      this.resizeChart = ()=>{
-        this.chart = echarts.init(document.getElementById(this.id)).resize();
-      };
-      window.addEventListener('resize',this.resizeChart);
-    },
-    beforeDestroy() {
-      if (!this.chart) {
-        return
-      }
-      this.chart.dispose()
-      this.chart = null
-      window.removeEventListener('resize', this.resizeChart);
-      this.resizeChart = null
-    },
-    created() {
-      this.getSensorDataDrawListDistribution(false);
-      this.getNavigateInclinometer();
-    },
-    methods: {
-      createSeries(){
-        this.series = [];
-          
-        let timeList = Object.keys(this.sensorDataList.distributionMap);
-        
-        for(var i = 0; i < timeList.length; i++){
-  
-          let r = Math.round(Math.random()*255);
-          let g = Math.round(Math.random()*255);
-          let b = Math.round(Math.random()*255);
-  
-          let seriesItem = {
-            name: timeList[i],
-            type: 'line',
-            smooth: true,
-            symbol: 'circle',
-            symbolSize: 5,
-            showSymbol: false,
-            lineStyle: {
-              normal: {
-                width: 1
-              }
-            },
-            itemStyle: {
-              normal: {
-                color: 'rgb(' + r + ',' + g + ',' + b + ')',
-                borderColor: 'rgb(' + r + ',' + g + ',' + b + ',' + 0.2 +')',
-                borderWidth: 12
-              }
-            },
-            data: []
-          };
-  
-          let seriesData = [];
-          for(var j = 0; j < this.sensorDataList.cdNameList.length; j++){
-            seriesData[j] = this.sensorDataList.distributionMap[timeList[i]][this.sensorDataList.cdNameList[j]];
-          }
-          
-          seriesItem.data = [null].concat(seriesData).concat([null]);
-          this.series.push(seriesItem);
-        }
-  
-        for(var j = 0; j < this.sensorDataList.cdNameList.length; j++){
-          let n = this.sensorDataList.cdNameList[j] + "";
-          this.x_series.push(n.substring(n.indexOf("(") + 1 ,n.indexOf(")")));
-        }
-      },
-      cleanBoxCd(){
-        this.searchModel.boxName = '';
-      },
-      getNavigateInclinometer(){
-        sensorApi.getNavigateInclinometer(this.searchModel).then((response) =>{
-          let navigate = response.data.navigate;
+  </div>
+ </template>
+ <script>
+ export default {
+  data() {
+    return {
+      zoom: 1,
+      boxArray: [],
+      isTrue: false,
+      width: "",
+      height: "",
+      left: "",
+      top: "",
+      b_i: "",
+      markHeight: 0,
+      markWidth: 0,
+      markTop: 0,
+      markLeft: 0,
+    };
+  },
+ 
+  methods: {
+    grain(){
+      if(this.boxArray.length == 0){
+        this.$message({
+            message: "无晶粒区域, 请重新框选",
+            type: 'error',
+            customClass:'mzindex'
+        });
+      }else{
+        // var offWidth = this.$refs.img.width;
+        var offHeight = this.$refs.img.height;
 
-          let prolist = Object.keys(navigate);
-          prolist.sort();
-          for(var i = 0; i < prolist.length; i++){
-            let proOpt = this.createOptions(navigate[prolist[i]])
-            this.boxNameOptions[prolist[i]] = proOpt;
-  
-            let pop = {};
-            pop.value = prolist[i];
-            this.projectNameOptions.push(pop);
-          }
-          
-          let unauthorized = response.data.unauthorized;
-          for(var i = 0; i < unauthorized.length; i++){
-            unauthorized[i] = {value: unauthorized[i], disabled: true};
-          }
-          this.projectNameOptions = this.projectNameOptions.concat(unauthorized);
-        })
-      },
-      createOptions(optionsList){
-        optionsList.sort();
-        let res = [];
-        for(var i = 0; i < optionsList.length; i++){
-          let optionsDic = {};
-          optionsDic.value = optionsList[i]
-          res.push(optionsDic);
-        }
-  
-        return res;
-      },
-      getSensorDataDrawListDistribution(flag = true) {
-        if(this.searchModel.fieldName == "" || this.searchModel.projectName == "" ||
-          this.searchModel.sensorType == "" || this.searchModel.fieldValue == "" ||
-          this.searchModel.dateValue == null || this.searchModel.dateValue.length < 2){
-            this.$message({
-              message:  "请完善查询条件",
-              type: 'error'
-            });
-            this.chart = echarts.init(document.getElementById(this.id));
-            this.chart.clear();
-            return 0;
-        }
-        sensorApi.getSensorDataDrawListDistribution(this.searchModel, flag).then((response) => {
-            this.sensorDataList = response.data;
-  
-            let unit = this.searchModel.sensorType;
-            this.unit = unit.substring(unit.indexOf("(") + 1 ,unit.indexOf(")"))
-            
-            this.chart = null;
-            this.createSeries()
-  
-            this.unit = this.sensorDataList.fieldName + '(' + this.unit + ')';
-            this.initChart();
-            
-            this.x_series = []
-            if(flag){
-              this.$message({
-                message: response.message,
-                type: 'success'
+        // var oriWidth = this.$refs.img.naturalWidth;
+        var oriHeight = this.$refs.img.naturalHeight;
+
+        var offset = offHeight / oriHeight
+
+        var imgTop = this.boxArray[0].top / offset;
+        var imgLeft = this.boxArray[0].left / offset;
+        var imgWidth = this.boxArray[0].width / offset;
+        var imgHeight = this.boxArray[0].height / offset;
+        console.log([imgTop, imgLeft, imgWidth, imgHeight])
+        return [imgTop, imgLeft, imgWidth, imgHeight]  
+      }
+    },
+    reposition(){
+      this.boxArray = [];
+      this.$refs.box.style.left = "0px";
+      this.$refs.box.style.top = "0px";
+      this.zoom = 1;
+    },
+    changeMode() {
+      this.isTrue = !this.isTrue;
+    },
+    moveMouse(e) {
+      let odiv = e.target; //获取目标元素
+ 
+      //算出鼠标相对元素的位置
+      let disX = e.clientX - odiv.offsetLeft;
+      let disY = e.clientY - odiv.offsetTop;
+
+      if (this.isTrue) {
+        // 拖动
+        document.onmousemove = (e) => {
+          //鼠标按下并移动的事件
+          //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+          let left = e.clientX - disX;
+          let top = e.clientY - disY;
+ 
+          //绑定元素位置到positionX和positionY上面
+          this.positionX = top;
+          this.positionY = left;
+ 
+          //移动当前元素
+          odiv.style.left = left + "px";
+          odiv.style.top = top + "px";
+        };
+        document.onmouseup = (e) => {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      } else {
+        this.boxArray = [];
+        // 添加div
+        document.onmousemove = (e) => {
+          //鼠标按下并移动的事件
+          //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+ 
+          let left = disX - odiv.getBoundingClientRect().x;
+          let top = disY - odiv.getBoundingClientRect().y;
+ 
+          this.width = (e.clientX - disX) / this.zoom;
+          this.height = (e.clientY - disY) / this.zoom;
+          this.markWidth = this.width;
+          this.markHeight = this.height;
+          this.markLeft = left;
+          this.markTop = top;
+          document.onmouseup = (e) => {
+            let left = disX - odiv.getBoundingClientRect().x;
+            let top = disY - odiv.getBoundingClientRect().y;
+            this.width = (e.clientX - disX) / this.zoom;
+            this.height = (e.clientY - disY) / this.zoom;
+ 
+
+            if (this.width > 5 && this.height > 5) {
+              this.boxArray.push({
+                width: this.width,
+                height: this.height,
+                left: left,
+                top: top,
               });
             }
-        });        
-      },
-    
-      initChart() {
-        this.chart = echarts.init(document.getElementById(this.id))
-        this.chart.clear();
-        this.chart = echarts.init(document.getElementById(this.id));
-
-        this.chart.setOption({
-          backgroundColor: '#394056',
-          title: {
-            top: 20,
-            text: this.fieldName,
-            textStyle: {
-              fontWeight: 'normal',
-              fontSize: 16,
-              color: '#F1F1F3'
-            },
-            left: '1%'
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              lineStyle: {
-                color: 'rgb(255,255,255)'
-              }
-            }
-          },
-          legend: {
-            top: 20,
-            icon: 'rect',
-            itemWidth: 14,
-            itemHeight: 5,
-            itemGap: 13,
-            data: [this.fieldName],
-            right: '4%',
-            textStyle: {
-              fontSize: 12,
-              color: 'rgb(255,255,255)'
-            }
-          },
-          grid: {
-            top: 100,
-            left: '2%',
-            right: '2%',
-            bottom: '2%',
-            containLabel: true
-          },
-          xAxis: [{
-            type: 'category',
-            boundaryGap: false,
-            axisLine: {
-              lineStyle: {
-                color: 'rgb(255,255,255)'
-              }
-            },
-            data: [""].concat(this.x_series).concat([""])
-          }],
-          yAxis: [{
-            type: 'value',
-            name: this.unit,
-            min: this.sensorDataList.min,
-            max: this.sensorDataList.max,
-            axisTick: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: 'rgb(255,255,255)'
-              }
-            },
-            axisLabel: {
-              margin: 10,
-              textStyle: {
-                fontSize: 14
-              }
-            },
-            splitLine: {
-              lineStyle: {
-                color: 'rgb(255,255,255)'
-              }
-            }
-          }],
-          series : this.series 
-        })
+ 
+            this.markWidth = 0;
+            this.markHeight = 0;
+            this.markLeft = 0;
+            this.markTop = 0;
+            document.onmousemove = null;
+            document.onmouseup = null;
+          };
+        };
       }
+    },
+    move(e) {
+      let odiv = e.target; //获取目标元素
+      //算出鼠标相对元素的位置
+      let disX = e.clientX - odiv.offsetLeft;
+      let disY = e.clientY - odiv.offsetTop;
+      document.onmousemove = (e) => {
+        //鼠标按下并移动的事件
+        //用鼠标的位置减去鼠标相对元素的位置，得到元素的位置
+        let left = e.clientX - disX;
+        let top = e.clientY - disY;
+ 
+        //绑定元素位置到positionX和positionY上面
+        this.positionX = top;
+        this.positionY = left;
+ 
+        //移动当前元素
+        odiv.style.left = left + "px";
+        odiv.style.top = top + "px";
+
+        if(this.boxArray.length > 0){
+          this.boxArray[0].left = left;
+          this.boxArray[0].top = top;
+        }
+      };
+      document.onmouseup = (e) => {
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
+    },
+ 
+    magnify() {
+      this.zoom += 0.1;
+    },
+    shrink() {
+      this.zoom -= 0.1;
+    },
+    handelClick(i) {
+      this.b_i = i;
+    },
+  },
+ };
+ </script>
+ <style lang="less">
+ #test {
+  .mzindex{ 
+        z-index:3000 !important; 
+    }
+  .content {
+    width: 800px;
+    height: 500px;
+    background: red;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+    .b_border {
+      border: 1px solid red !important;
+    }
+    .mark {
+      z-index: 9999999;
     }
   }
-  </script> -->
+ }
+ </style>
+ 
