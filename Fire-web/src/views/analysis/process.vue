@@ -17,7 +17,6 @@
       <el-button n v-if = "showButton" size="medium" type="success" @click="segment" icon = "el-icon-scissors">熔化区分割</el-button>
       <el-button n v-if = "showButton" size="medium" type="success" @click="cavity" icon = "el-icon-thumb">孔洞提取</el-button>
       <el-button n v-if = "showButton" size="medium" type="success" @click="grain" icon = "el-icon-crop">晶粒提取</el-button>
-      <!-- <el-button size="medium" type="success" @click="grain" icon = "el-icon-thumb">晶粒提取</el-button> -->
     </div>
 
 
@@ -46,6 +45,28 @@
       </div>
     </el-dialog>
 
+    <el-dialog :visible.sync="grainAreaVisible" style="top:-100px">
+      <div @mousewheel="bbimg(this)" class = "img-display">
+        <div class="img-footer">
+          <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
+          <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
+          <el-button icon = "el-icon-edit" @click="grain_seg()" type="info">分割</el-button>
+			  </div>
+        <img width="100%" :src="require('../../../../Fire/Fire-py/grain.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
+      </div>
+    </el-dialog>
+
+    <el-dialog :visible.sync="grainResVisible" style="top:-100px">
+      <div @mousewheel="bbimg(this)" class = "img-display">
+        <div class="img-footer">
+          <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
+          <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
+          <el-button icon="el-icon-download" @click="exportGrain()" type="info">导出特征</el-button>
+			  </div>
+        <img width="100%" :src="require('../../../../Fire/Fire-py/grain.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
+      </div>
+    </el-dialog>
+
     <el-dialog :visible.sync="grainVisible" style="top:-100px">
       <div id="test" style="user-select: none;">
         <div class="img-footer" style="margin-bottom: 20px;">
@@ -54,8 +75,7 @@
           <el-button icon = "el-icon-edit" @click="changeMode" v-if="mode">添加</el-button>
           <el-button icon = "el-icon-thumb" @click="changeMode" v-if="!mode">移动</el-button>
           <el-button icon = "el-icon-refresh" @click="reposition">复位</el-button>
-          <el-button icon = "el-icon-crop" @click="grain_area">截取</el-button>   
-          <el-button icon = "el-icon-crop" @click="grain_seg">提取</el-button>        
+          <el-button icon = "el-icon-crop" @click="grain_area">截取</el-button>         
         </div>
 
         <div class="content">
@@ -129,6 +149,8 @@ export default {
         segVisible: false,
         cavityVisible: false,
         grainVisible: false,
+        grainAreaVisible: false,
+        grainResVisible: false,
 
         ifSeg:false,
 
@@ -172,6 +194,10 @@ export default {
             type: 'success'
           });
         })
+        this.grainResVisible = true;
+      },
+      exportGrain(){
+        window.location.href="./grain.xlsx"
       },
       grain_area(){
         if(this.boxArray.length == 0){
@@ -202,7 +228,14 @@ export default {
               type: 'success',
               customClass:'mzindex'
             })
-         })
+          })
+          imgApi.grain().then(response => {
+            this.$message({
+              message: response.message,
+              type: 'success'
+            });
+          })
+         this.grainAreaVisible = true;
         }
       },
       reposition(){
