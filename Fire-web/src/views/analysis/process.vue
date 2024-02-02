@@ -54,7 +54,8 @@
           <el-button icon = "el-icon-edit" @click="changeMode" v-if="mode">添加</el-button>
           <el-button icon = "el-icon-thumb" @click="changeMode" v-if="!mode">移动</el-button>
           <el-button icon = "el-icon-refresh" @click="reposition">复位</el-button>
-          <el-button icon = "el-icon-crop" @click="grain_area">截取</el-button>          
+          <el-button icon = "el-icon-crop" @click="grain_area">截取</el-button>   
+          <el-button icon = "el-icon-crop" @click="grain_seg">提取</el-button>        
         </div>
 
         <div class="content">
@@ -163,13 +164,14 @@ export default {
     methods: {
       grain(){
         this.grainVisible = true;
-        // imgApi.grain().then(response => {
-        //   this.$message({
-        //     message: response.message,
-        //     type: 'success'
-        //   });
-        //   this.cavityVisible = true;
-        // })
+      },
+      grain_seg(){
+        imgApi.grain().then(response => {
+          this.$message({
+            message: response.message,
+            type: 'success'
+          });
+        })
       },
       grain_area(){
         if(this.boxArray.length == 0){

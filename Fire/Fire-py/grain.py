@@ -6,7 +6,7 @@ import pandas as pd
 from cellpose.io import logger_setup
 logger_setup()
 
-file = "./Fire-py/grain_area.png"
+file = "./Fire-py/corp_grain.jpg"
 img = io.imread(file)
 model = models.Cellpose(gpu=True, model_type='cyto')
 masks, flows, styles, diams = model.eval(img, diameter=None, channels=[0,0])
