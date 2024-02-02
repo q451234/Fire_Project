@@ -1,21 +1,13 @@
-from cellpose import models, io
 import numpy as np
-import cv2, math, os
+import cv2, math
 import pandas as pd
 
-from cellpose.io import logger_setup
-logger_setup()
+masks = cv2.imread("./Fire-py/grain_mask.png", -1)
 
-file = "./Fire-py/corp_grain.jpg"
-img = io.imread(file)
-model = models.Cellpose(gpu=True, model_type='cyto')
-masks, flows, styles, diams = model.eval(img, diameter=None, channels=[0,0])
-# io.save_masks(img, masks, flows, file, save_txt=False)
-io.imsave("./Fire-py/grain_mask.png", masks)
+res = {"Id": [],"Area": [], "Circumference": [], "Roundness": []}
 
 id = 1
 
-img = img[..., [2,1,0]].copy()
 n = np.max(masks)
 
 for i in range(1, n + 1):
@@ -34,13 +26,17 @@ for i in range(1, n + 1):
             circumference = cv2.arcLength(contour, True)
             roundness = (4 * math.pi * area) / (circumference * circumference)
 
+            res["Id"].append(id)
+            res["Area"].append(area)
+            res["Circumference"].append(circumference)
+            res["Roundness"].append(roundness)
+
+            id = id + 1
+
             M = cv2.moments(contour)
             cx = int(M['m10']/M['m00']) # 求x坐标
             cy = int(M['m01']/M['m00']) # 求y坐标
         
-            cv2.drawContours(img, contours, idx, (0,255,0), 1)
-            cv2.putText(img, str(id), (cx, cy), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 255), 1)
-            id = id + 1
-    
 
-cv2.imwrite("./Fire-py/grain.jpg", img)
+data = pd.DataFrame(res)
+data.to_csv("../Fire-web/public/grain.csv", index=None)

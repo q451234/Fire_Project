@@ -38,5 +38,11 @@ export default{
       method: 'post',
       data: box
     });
+  },
+  exportGrain(){
+    return request({
+      url: '/grain/export',
+      method: 'get',
+    });
   }
 }

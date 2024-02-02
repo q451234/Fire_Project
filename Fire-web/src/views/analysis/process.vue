@@ -50,18 +50,7 @@
         <div class="img-footer">
           <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
           <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
-          <el-button icon = "el-icon-edit" @click="grain_seg()" type="info">分割</el-button>
-			  </div>
-        <img width="100%" :src="require('../../../../Fire/Fire-py/grain.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
-      </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="grainResVisible" style="top:-100px">
-      <div @mousewheel="bbimg(this)" class = "img-display">
-        <div class="img-footer">
-          <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
-          <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
-          <el-button icon="el-icon-download" @click="exportGrain()" type="info">导出特征</el-button>
+          <el-button icon = "el-icon-download" @click="exportGrain()" type="info">导出特征</el-button>
 			  </div>
         <img width="100%" :src="require('../../../../Fire/Fire-py/grain.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
@@ -150,8 +139,6 @@ export default {
         cavityVisible: false,
         grainVisible: false,
         grainAreaVisible: false,
-        grainResVisible: false,
-
         ifSeg:false,
 
 
@@ -187,17 +174,11 @@ export default {
       grain(){
         this.grainVisible = true;
       },
-      grain_seg(){
-        imgApi.grain().then(response => {
-          this.$message({
-            message: response.message,
-            type: 'success'
-          });
-        })
-        this.grainResVisible = true;
-      },
       exportGrain(){
-        window.location.href="./grain.xlsx"
+        this.$message("处理中")
+        imgApi.exportGrain().then(response => {
+          window.location.href="./grain.csv"
+        });
       },
       grain_area(){
         if(this.boxArray.length == 0){
@@ -221,21 +202,23 @@ export default {
           var imgHeight = this.boxArray[0].height / offset;
           
           var box = [imgTop, imgLeft, imgWidth, imgHeight]
-          console.log(box)
+
           imgApi.corpGrain(box).then(response => {
             this.$message({
-              message: response.message,
-              type: 'success',
+              message : "处理中",
+              // message: response.message,
+              // type: 'success',
               customClass:'mzindex'
             })
           })
           imgApi.grain().then(response => {
             this.$message({
               message: response.message,
-              type: 'success'
+              type: 'success',
+              customClass:'mzindex'
             });
+            this.grainAreaVisible = true;
           })
-         this.grainAreaVisible = true;
         }
       },
       reposition(){
@@ -390,7 +373,6 @@ export default {
               customClass:'mzindex'
             });
             this.cavityVisible = true;
-            console.log(response)
           })          
         }
         this.ifSeg = true

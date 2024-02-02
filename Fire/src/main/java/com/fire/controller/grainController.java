@@ -71,4 +71,29 @@ public class grainController {
         }
         return Result.success("晶粒区域裁剪成功");
     }
+
+    @ApiOperation(value = "晶粒特征提取")
+    @GetMapping("/export")
+    public Result<?> exportGrain() {
+        try {
+            String exe = "D:\\anaconda\\python.exe";
+            String py = "./Fire-py/grain_export.py";
+
+            Process process = Runtime.getRuntime().exec(exe + " " + py);
+            //获取结果的同时设置输入流编码格式"gb2312"
+            InputStreamReader isr = new InputStreamReader(process.getInputStream(),"gb2312");
+            LineNumberReader input = new LineNumberReader(isr);
+
+            String line = null;
+            while ((line = input.readLine()) != null) {
+                log.info(line);
+            }
+            input.close();
+            isr.close();
+            process.waitFor();
+        } catch (InterruptedException | IOException e) {
+            log.info("调用python脚本并读取结果时出错：" + e.getMessage());
+        }
+        return Result.success("晶粒特征提取成功");
+    }
 }
