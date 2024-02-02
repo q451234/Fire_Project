@@ -39,4 +39,4 @@ for i in range(1, n + 1):
         
 
 data = pd.DataFrame(res)
-data.to_csv("../Fire-web/public/grain.csv", index=None)
+data.to_csv("./Fire-py/grain.csv", index=None)

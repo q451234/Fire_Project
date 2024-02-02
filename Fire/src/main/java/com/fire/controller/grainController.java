@@ -6,9 +6,14 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Api(tags = "晶粒相关接口列表")
@@ -94,6 +99,25 @@ public class grainController {
         } catch (InterruptedException | IOException e) {
             log.info("调用python脚本并读取结果时出错：" + e.getMessage());
         }
-        return Result.success("晶粒特征提取成功");
+
+        List<List<String>> table = new ArrayList<>();
+        // 创建 reader
+        try (BufferedReader br = Files.newBufferedReader(Paths.get("./Fire-py/grain.csv"))) {
+            // CSV文件的分隔符
+            String DELIMITER = ",";
+            // 按行读取
+            String line;
+            while ((line = br.readLine()) != null) {
+                // 分割
+                String[] columns = line.split(DELIMITER);
+
+                List<String> data = new ArrayList<>(Arrays.asList(columns));
+                table.add(data);
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        return Result.success(table);
     }
 }

@@ -177,7 +177,26 @@ export default {
       exportGrain(){
         this.$message("处理中")
         imgApi.exportGrain().then(response => {
-          window.location.href="./grain.csv"
+          // 生成示例表格数据
+          const tableData = response.data
+
+          // 将表格数据转换为CSV格式
+          const csvContent = tableData.map(row => row.join(',')).join('\n');
+          
+          // 创建一个Blob对象，用于存储CSV内容
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+
+          // 创建下载链接
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = 'grain.csv';
+
+          // 将链接添加到DOM中，并模拟点击以触发下载
+          document.body.appendChild(link);
+          link.click();
+
+          // 清理创建的链接
+          document.body.removeChild(link);
         });
       },
       grain_area(){
@@ -471,7 +490,7 @@ export default {
 <style lang = "less">
  #test {
   .mzindex{ 
-        z-index:3000 !important; 
+        z-index:9000 !important; 
     }
   .content {
     // cursor: move;
