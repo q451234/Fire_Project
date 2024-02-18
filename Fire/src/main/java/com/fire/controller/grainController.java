@@ -4,6 +4,7 @@ import com.fire.common.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
@@ -22,11 +23,13 @@ import java.util.List;
 @RequestMapping("/grain")
 public class grainController {
 
+    @Value("${py-exe}")
+    private String exe;
+
     @ApiOperation(value = "晶粒提取")
     @GetMapping("/seg")
     public Result<?> extractGrain() {
         try {
-            String exe = "D:\\anaconda\\python.exe";
             String py = "./Fire-py/grain.py";
 
             Process process = Runtime.getRuntime().exec(exe + " " + py);
@@ -56,7 +59,6 @@ public class grainController {
         int height = (int) Math.round(box.get(3));
 
         try {
-            String exe = "D:\\anaconda\\python.exe";
             String py = "./Fire-py/grain_corp.py";
 
             Process process = Runtime.getRuntime().exec(exe + " " + py + " " + top + " " + left + " " + width + " " + height);
@@ -81,7 +83,6 @@ public class grainController {
     @GetMapping("/export")
     public Result<?> exportGrain() {
         try {
-            String exe = "D:\\anaconda\\python.exe";
             String py = "./Fire-py/grain_export.py";
 
             Process process = Runtime.getRuntime().exec(exe + " " + py);

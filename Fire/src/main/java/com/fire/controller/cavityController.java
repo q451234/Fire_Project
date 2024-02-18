@@ -1,14 +1,14 @@
 package com.fire.controller;
 
-import com.fire.common.Constant;
 import com.fire.common.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -19,11 +19,13 @@ import java.io.LineNumberReader;
 @RequestMapping("/cavity")
 public class cavityController {
 
+    @Value("${py-exe}")
+    private String exe;
+
     @ApiOperation(value = "孔洞提取")
     @GetMapping("/seg")
     public Result<?> extractCavity() {
         try {
-            String exe = "D:\\anaconda\\python.exe";
             String py = "./Fire-py/cavity.py";
 
             Process process = Runtime.getRuntime().exec(exe + " " + py);
@@ -48,7 +50,6 @@ public class cavityController {
     @GetMapping("/export")
     public Result<?> exportCavity() {
         try {
-            String exe = "D:\\anaconda\\python.exe";
             String py = "./Fire-py/cavity_export.py";
 
             Process process = Runtime.getRuntime().exec(exe + " " + py);

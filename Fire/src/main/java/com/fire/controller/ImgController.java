@@ -5,6 +5,7 @@ import com.fire.common.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,9 @@ import java.io.LineNumberReader;
 @RestController
 @RequestMapping("/img")
 public class ImgController {
+
+    @Value("${py-exe}")
+    private String exe;
 
     @ApiOperation(value = "返回前端发送来的图片")
     @PostMapping("/upload")
@@ -43,7 +47,6 @@ public class ImgController {
     @GetMapping("/seg")
     public Result<?> segMeltZoo() {
         try {
-            String exe = "D:\\anaconda\\python.exe";
             String py = "./Fire-py/seg.py";
 
             Process process = Runtime.getRuntime().exec(exe + " " + py);

@@ -16,6 +16,8 @@ spring:
 logging:
   config: classpath:logback-spring.xml
 
+py-exe: "D:\\anaconda\\python.exe"
+
 mybatis-plus:
   global-config:
     db-config:
