@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: '传感器数据管理系统',
+  title: '火场熔痕特征提取系统',
 
   /**
    * @type {boolean} true | false

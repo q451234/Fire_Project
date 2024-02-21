@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">欢迎使用传感器数据管理系统</h3>
+        <h3 class="title">欢迎使用火场熔痕特征提取系统</h3>
       </div>
 
       <el-form-item prop="username">
