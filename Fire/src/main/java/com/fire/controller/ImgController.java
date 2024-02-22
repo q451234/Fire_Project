@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.HashMap;
 
 @Api(tags = "图像处理相关接口列表")
 @Slf4j
@@ -65,5 +66,28 @@ public class ImgController {
             log.info("调用python脚本并读取结果时出错：" + e.getMessage());
         }
         return Result.success("熔化区分割成功");
+    }
+
+    @ApiOperation(value = "图像识别")
+    @GetMapping("/classify")
+    public Result<?> classify() {
+        String line = null;
+        try {
+            String py = "./Fire-py/swin.py";
+
+            Process process = Runtime.getRuntime().exec(exe + " " + py);
+            //获取结果的同时设置输入流编码格式"gb2312"
+            InputStreamReader isr = new InputStreamReader(process.getInputStream(),"gb2312");
+            LineNumberReader input = new LineNumberReader(isr);
+
+            line = input.readLine();
+            log.info(line);
+            input.close();
+            isr.close();
+            process.waitFor();
+        } catch (InterruptedException | IOException e) {
+            log.info("调用python脚本并读取结果时出错：" + e.getMessage());
+        }
+        return Result.success(line, "熔痕类型识别成功");
     }
 }

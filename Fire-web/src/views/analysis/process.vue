@@ -11,12 +11,14 @@
       :http-request="picUpload"
       list-type="picture">
       <el-button size="medium" type="primary" icon="el-icon-upload2">点击上传</el-button>
+      <el-tag v-show="showClassfiy" type="danger" style="margin-left: 100px;" ref="classify" :key="res">{{res}}</el-tag>
     </el-upload> 
 
-    <div>
-      <el-button n v-if = "showButton" size="medium" type="success" @click="segment" icon = "el-icon-scissors">熔化区分割</el-button>
+    <div style="padding-top: 15px;">
+      <el-button n v-if = "showButton" size="medium" type="danger" @click="classify" icon = "el-icon-camera">类型识别</el-button>
+      <el-button n v-if = "showButton" size="medium" type="info" @click="segment" icon = "el-icon-scissors">熔化区分割</el-button>
       <el-button n v-if = "showButton" size="medium" type="success" @click="cavity" icon = "el-icon-thumb">孔洞提取</el-button>
-      <el-button n v-if = "showButton" size="medium" type="success" @click="grain" icon = "el-icon-crop">晶粒提取</el-button>
+      <el-button n v-if = "showButton" size="medium" type="warning" @click="grain" icon = "el-icon-crop">晶粒提取</el-button>
     </div>
 
 
@@ -141,6 +143,8 @@ export default {
         grainAreaVisible: false,
         ifSeg:false,
 
+        showClassfiy: false,
+        res: "",
 
         deg: 0,
 				test: '',
@@ -171,6 +175,21 @@ export default {
       };
     },
     methods: {
+      classify(){
+        let dic = {0 : "火烧熔痕", 1 : "一次短路熔痕", 2 : "二次短路熔痕"}
+        this.$message("处理中")
+        imgApi.classify().then(response => {
+          let res = response.data;
+          this.$message({
+              message: response.message,
+              type: 'success',
+              customClass:'mzindex'
+          });
+          
+          this.showClassfiy = true
+          this.res = "参考类型 : " + dic[res]
+        })
+      },
       close(){
         this.segVisible = false,
         this.cavityVisible = false,
