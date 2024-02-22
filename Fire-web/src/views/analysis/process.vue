@@ -24,7 +24,7 @@
         <img width="100%" :src="originImageUrl" alt="">
     </el-dialog>
 
-    <el-dialog :visible.sync="segVisible" style="top:-100px">
+    <el-dialog :visible.sync="segVisible" style="top:-100px" :before-close="close">
       <div @mousewheel="bbimg(this)" class = "img-display">
         <div class="img-footer">
           <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
@@ -34,7 +34,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="cavityVisible" style="top:-100px">
+    <el-dialog :visible.sync="cavityVisible" style="top:-100px" :before-close="close">
       <div @mousewheel="bbimg(this)" class = "img-display">
         <div class="img-footer">
           <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
@@ -45,7 +45,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="grainAreaVisible" style="top:-100px">
+    <el-dialog :visible.sync="grainAreaVisible" style="top:-100px" :before-close="closeGrain">
       <div @mousewheel="bbimg(this)" class = "img-display">
         <div class="img-footer">
           <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
@@ -56,7 +56,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="grainVisible" style="top:-100px">
+    <el-dialog :visible.sync="grainVisible" style="top:-100px" :before-close="close" >
       <div id="test" style="user-select: none;">
         <div class="img-footer" style="margin-bottom: 20px;">
           <el-button icon = "el-icon-zoom-in" @click="magnify">放大</el-button>
@@ -171,6 +171,54 @@ export default {
       };
     },
     methods: {
+      close(){
+        this.segVisible = false,
+        this.cavityVisible = false,
+        this.grainVisible = false,
+        this.grainAreaVisible = false,
+
+        this.deg = 0,
+				this.test = '',
+				this.zoomInShow = false,
+				this.params = {
+					zoom: 1,
+					left: 0,
+					top: 0,
+					currentX: 0,
+					currentY: 0,
+					flag: false,
+				},
+
+
+        //grain
+        this.zoom = 1,
+        this.boxArray = [],
+        this.mode = true,
+        this.width = "",
+        this.height = "",
+        this.left = "",
+        this.top = "",
+        this.b_i = "",
+        this.markHeight = 0,
+        this.markWidth = 0,
+        this.markTop = 0,
+        this.markLeft = 0
+      },
+      closeGrain(){
+        this.grainAreaVisible = false
+
+        this.deg = 0,
+				this.test = '',
+				this.zoomInShow = false,
+				this.params = {
+					zoom: 1,
+					left: 0,
+					top: 0,
+					currentX: 0,
+					currentY: 0,
+					flag: false,
+				}
+      },
       grain(){
         this.grainVisible = true;
       },
