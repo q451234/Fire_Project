@@ -30,7 +30,7 @@
           <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
           <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
 			  </div>
-        <img width="100%" :src="require('../../../../Fire/Fire-py/res.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
+        <img width="100%" :src="require('../../../../Fire/Fire-py/img/res.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
     </el-dialog>
 
@@ -41,7 +41,7 @@
           <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
           <el-button icon="el-icon-download" @click="exportCavity()" type="info">导出特征</el-button>
 			  </div>
-        <img width="100%" :src="require('../../../../Fire/Fire-py/cavity_vis.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
+        <img width="100%" :src="require('../../../../Fire/Fire-py/img/cavity_vis.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
     </el-dialog>
 
@@ -52,7 +52,7 @@
           <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
           <el-button icon = "el-icon-download" @click="exportGrain()" type="info">导出特征</el-button>
 			  </div>
-        <img width="100%" :src="require('../../../../Fire/Fire-py/grain.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
+        <img width="100%" :src="require('../../../../Fire/Fire-py/img/grain.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
     </el-dialog>
 
@@ -112,7 +112,7 @@
             ></div>
             <img
               style="width: 100%; pointer-events: none;"
-              :src="require('../../../../Fire/Fire-py/origin.jpg')"
+              :src="require('../../../../Fire/Fire-py/img/origin.jpg')"
               alt=""
               @mousedown="isTrue ? null : move"
               ref = "img"

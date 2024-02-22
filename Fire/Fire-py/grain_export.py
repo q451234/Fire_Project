@@ -2,7 +2,7 @@ import numpy as np
 import cv2, math
 import pandas as pd
 
-masks = cv2.imread("./Fire-py/grain_mask.png", -1)
+masks = cv2.imread("./Fire-py/img/grain_mask.png", -1)
 
 res = {"Id": [],"Area": [], "Circumference": [], "Roundness": []}
 

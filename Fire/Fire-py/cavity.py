@@ -64,8 +64,8 @@ def nnew_BMMC(img, mask):
 
     return final
 
-img_path = "./Fire-py/origin.jpg"
-mask_path = "./Fire-py/mask.jpg"
+img_path = "./Fire-py/img/origin.jpg"
+mask_path = "./Fire-py/img/mask.jpg"
 factor = 0.25
 
 ori_img = cv2.imread(img_path)
@@ -88,7 +88,7 @@ out2 = nnew_BMMC(img, mask)
 
 out1 = cv2.resize(out1, (out2.shape[1], out2.shape[0]))
 out_final = out2 | out1
-cv2.imwrite("./Fire-py/cavity.jpg", out_final)
+cv2.imwrite("./Fire-py/img/cavity.jpg", out_final)
 
 cavity = draw(ori_img, out_final)
-cv2.imwrite("./Fire-py/cavity_vis.jpg", cavity)
+cv2.imwrite("./Fire-py/img/cavity_vis.jpg", cavity)

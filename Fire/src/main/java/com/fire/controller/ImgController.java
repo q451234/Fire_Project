@@ -35,7 +35,7 @@ public class ImgController {
 
         try {
             //将文件保存指定目录
-            file.transferTo(new File(path + "\\Fire-py\\origin.jpg"));
+            file.transferTo(new File(path + "\\Fire-py\\img\\origin.jpg"));
             return Result.success("图片传输成功");
         } catch (Exception e) {
             e.printStackTrace();

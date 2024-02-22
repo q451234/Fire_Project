@@ -1,7 +1,7 @@
 import cv2,math
 import pandas as pd
 
-cavity_path = "./Fire-py/cavity.jpg"
+cavity_path = "./Fire-py/img/cavity.jpg"
 
 cavity = cv2.imread(cavity_path, 0)
 

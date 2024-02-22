@@ -6,12 +6,12 @@ import pandas as pd
 from cellpose.io import logger_setup
 logger_setup()
 
-file = "./Fire-py/corp_grain.jpg"
+file = "./Fire-py/img/corp_grain.jpg"
 img = io.imread(file)
 model = models.Cellpose(gpu=True, model_type='cyto')
 masks, flows, styles, diams = model.eval(img, diameter=None, channels=[0,0])
 # io.save_masks(img, masks, flows, file, save_txt=False)
-io.imsave("./Fire-py/grain_mask.png", masks)
+io.imsave("./Fire-py/img/grain_mask.png", masks)
 
 id = 1
 
@@ -43,4 +43,4 @@ for i in range(1, n + 1):
             id = id + 1
     
 
-cv2.imwrite("./Fire-py/grain.jpg", img)
+cv2.imwrite("./Fire-py/img/grain.jpg", img)

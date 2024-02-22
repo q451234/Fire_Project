@@ -29,11 +29,11 @@ config_vit.patches.grid = (int(512 / 16), int(512 / 16))
     
 model = ViT_seg(config_vit, img_size=512, num_classes=2).cuda()
 
-model.load_state_dict(torch.load("./Fire-py/best.pth"))
+model.load_state_dict(torch.load("./Fire-py/model/best.pth"))
 
 model.eval()
 
-img_path = "./Fire-py/origin.jpg"
+img_path = "./Fire-py/img/origin.jpg"
 
 image = Image.open(img_path).convert('RGB')
 
@@ -59,7 +59,7 @@ img_mask = out[int((512 - nh) // 2) : int((512 - nh) // 2 + nh), \
 
 img_mask = cv2.resize(img_mask.astype("uint8"), (original_w, original_h), interpolation = cv2.INTER_LINEAR)
 
-cv2.imwrite("./Fire-py/mask.jpg", img_mask)
+cv2.imwrite("./Fire-py/img/mask.jpg", img_mask)
 
 ret, mbinary = cv2.threshold(img_mask, 0, 255, 0)
 
@@ -68,9 +68,9 @@ contours, hierarchy = cv2.findContours(mbinary, cv2.RETR_EXTERNAL, cv2.CHAIN_APP
 img = cv2.cvtColor(np.asarray(origin_img),cv2.COLOR_RGB2BGR)
 cv2.drawContours(img, contours, -1, (0,0,255), 15)
 
-cv2.imwrite("./Fire-py/res.jpg", img)
+cv2.imwrite("./Fire-py/img/res.jpg", img)
 
 mask = [img_mask, img_mask, img_mask]
 mask = np.transpose(mask, [1,2,0])
-cv2.imwrite("./Fire-py/seg.jpg", mask * origin_img)
+cv2.imwrite("./Fire-py/img/seg.jpg", mask * origin_img)
 
