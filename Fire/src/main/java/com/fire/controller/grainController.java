@@ -1,6 +1,7 @@
 package com.fire.controller;
 
 import com.fire.common.Result;
+import com.fire.util.Common;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -101,24 +102,7 @@ public class grainController {
             log.info("调用python脚本并读取结果时出错：" + e.getMessage());
         }
 
-        List<List<String>> table = new ArrayList<>();
-        // 创建 reader
-        try (BufferedReader br = Files.newBufferedReader(Paths.get("./Fire-py/grain.csv"))) {
-            // CSV文件的分隔符
-            String DELIMITER = ",";
-            // 按行读取
-            String line;
-            while ((line = br.readLine()) != null) {
-                // 分割
-                String[] columns = line.split(DELIMITER);
-
-                List<String> data = new ArrayList<>(Arrays.asList(columns));
-                table.add(data);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
+        List<List<String>> table = Common.exportTable("./Fire-py/feature/grain.csv");
         return Result.success(table);
     }
 }

@@ -44,5 +44,17 @@ export default{
       url: '/grain/export',
       method: 'get',
     });
+  },
+  classify(){
+    return request({
+      url: '/img/classify',
+      method: 'get',
+    });
+  },
+  exportMelting(){
+    return request({
+      url: '/img/export',
+      method: 'get',
+    });
   }
 }

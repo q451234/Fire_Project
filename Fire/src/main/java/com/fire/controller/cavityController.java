@@ -1,6 +1,7 @@
 package com.fire.controller;
 
 import com.fire.common.Result;
+import com.fire.util.Common;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +10,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Api(tags = "孔洞相关接口列表")
 @Slf4j
@@ -67,6 +74,8 @@ public class cavityController {
         } catch (InterruptedException | IOException e) {
             log.info("调用python脚本并读取结果时出错：" + e.getMessage());
         }
-        return Result.success("孔洞特征表格生成成功");
+
+        List<List<String>> table = Common.exportTable("./Fire-py/feature/cavity.csv");
+        return Result.success(table);
     }
 }

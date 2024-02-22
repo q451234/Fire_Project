@@ -31,6 +31,7 @@
         <div class="img-footer">
           <el-button icon = "el-icon-refresh-right" @click="rotate()" type="info">旋转</el-button>
           <el-button icon = "el-icon-refresh" @click="imgOut()" type="info">还原</el-button>
+          <el-button icon = "el-icon-download" @click="exportMelting()" type="info">导出特征</el-button>
 			  </div>
         <img width="100%" :src="require('../../../../Fire/Fire-py/img/res.jpg')" alt="" class="imgclass" :style="test " @mousedown="imgMove">
       </div>
@@ -189,6 +190,31 @@ export default {
           this.showClassfiy = true
           this.res = "参考类型 : " + dic[res]
         })
+      },
+      exportMelting(){
+        this.$message("处理中")
+        imgApi.exportMelting().then(response => {
+          // 生成示例表格数据
+          const tableData = response.data
+
+          // 将表格数据转换为CSV格式
+          const csvContent = tableData.map(row => row.join(',')).join('\n');
+          
+          // 创建一个Blob对象，用于存储CSV内容
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+
+          // 创建下载链接
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = 'melting.csv';
+
+          // 将链接添加到DOM中，并模拟点击以触发下载
+          document.body.appendChild(link);
+          link.click();
+
+          // 清理创建的链接
+          document.body.removeChild(link);
+        });
       },
       close(){
         this.segVisible = false,
@@ -466,7 +492,26 @@ export default {
       exportCavity(){
         this.$message("处理中")
         imgApi.exportCavity().then(response => {
-          window.location.href="./cavity.xlsx"
+          // 生成示例表格数据
+          const tableData = response.data
+
+          // 将表格数据转换为CSV格式
+          const csvContent = tableData.map(row => row.join(',')).join('\n');
+          
+          // 创建一个Blob对象，用于存储CSV内容
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+
+          // 创建下载链接
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = 'cavity.csv';
+
+          // 将链接添加到DOM中，并模拟点击以触发下载
+          document.body.appendChild(link);
+          link.click();
+
+          // 清理创建的链接
+          document.body.removeChild(link);
         });
       },
 
@@ -474,11 +519,13 @@ export default {
         if (fileList.length > 0) {
           this.fileList = [file]//这一步，是 展示最后一次选择文件
           this.ifSeg = false
+          this.showClassfiy = false
         }
       },
       onRemove(file, fileList){
         this.showButton = false
         this.ifSeg = false
+        this.showClassfiy = false
       },
       handlePreview(file) {
         this.originImageUrl = file.url;
@@ -497,8 +544,6 @@ export default {
         })
         this.showButton = true
       },
-
-
 
       // 鼠标滚轮滚动实现图片放大缩小 
 			bbimg(ev) {

@@ -2,6 +2,7 @@ package com.fire.controller;
 
 import com.fire.common.Constant;
 import com.fire.common.Result;
+import com.fire.util.Common;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -9,11 +10,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 @Api(tags = "图像处理相关接口列表")
 @Slf4j
@@ -89,5 +92,12 @@ public class ImgController {
             log.info("调用python脚本并读取结果时出错：" + e.getMessage());
         }
         return Result.success(line, "熔痕类型识别成功");
+    }
+
+    @ApiOperation(value = "导出熔化区特征")
+    @GetMapping("/export")
+    public Result<?> exportMelting() {
+        List<List<String>> table = Common.exportTable("./Fire-py/feature/melting.csv");
+        return Result.success(table);
     }
 }

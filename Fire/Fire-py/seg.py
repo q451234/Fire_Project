@@ -65,8 +65,10 @@ ret, mbinary = cv2.threshold(img_mask, 0, 255, 0)
 
 contours, hierarchy = cv2.findContours(mbinary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+contours = sorted(contours, key = cv2.contourArea, reverse = True)
+
 img = cv2.cvtColor(np.asarray(origin_img),cv2.COLOR_RGB2BGR)
-cv2.drawContours(img, contours, -1, (0,0,255), 15)
+cv2.drawContours(img, contours, 0, (0,0,255), 15)
 
 cv2.imwrite("./Fire-py/img/res.jpg", img)
 
@@ -74,3 +76,19 @@ mask = [img_mask, img_mask, img_mask]
 mask = np.transpose(mask, [1,2,0])
 cv2.imwrite("./Fire-py/img/seg.jpg", mask * origin_img)
 
+import pandas as pd
+import math
+
+res = {"Area": [], "Circumference": [], "Roundness": []}
+
+contour = contours[0]
+area = cv2.contourArea(contour)
+circumference = cv2.arcLength(contour, True)
+roundness = (4 * math.pi * area) / (circumference * circumference)
+
+res["Area"].append(area)
+res["Circumference"].append(circumference)
+res["Roundness"].append(roundness)
+
+data = pd.DataFrame(res)
+data.to_csv("./Fire-py/feature/melting.csv", index=None)
