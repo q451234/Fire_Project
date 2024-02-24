@@ -50,24 +50,9 @@ public class ImgController {
     @ApiOperation(value = "熔化区分割")
     @GetMapping("/seg")
     public Result<?> segMeltZoo() {
-        try {
-            String py = "./Fire-py/seg.py";
+        String py = "./Fire-py/seg.py";
+        Common.executePy(py, exe);
 
-            Process process = Runtime.getRuntime().exec(exe + " " + py);
-            //获取结果的同时设置输入流编码格式"gb2312"
-            InputStreamReader isr = new InputStreamReader(process.getInputStream(),"gb2312");
-            LineNumberReader input = new LineNumberReader(isr);
-
-            String line = null;
-            while ((line = input.readLine()) != null) {
-                log.info(line);
-            }
-            input.close();
-            isr.close();
-            process.waitFor();
-        } catch (InterruptedException | IOException e) {
-            log.info("调用python脚本并读取结果时出错：" + e.getMessage());
-        }
         return Result.success("熔化区分割成功");
     }
 
@@ -84,7 +69,7 @@ public class ImgController {
             LineNumberReader input = new LineNumberReader(isr);
 
             line = input.readLine();
-            log.info(line);
+
             input.close();
             isr.close();
             process.waitFor();
