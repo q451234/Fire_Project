@@ -1,10 +1,12 @@
 import numpy as np
-import cv2, math
+import cv2, math, sys
 import pandas as pd
+
+type = int(sys.argv[1])
 
 masks = cv2.imread("./Fire-py/img/grain_mask.png", -1)
 
-res = {"Id": [],"Area": [], "Circumference": [], "Roundness": []}
+res = {"Id": [],"Area": [], "Circumference": [], "Roundness": [], "Type" : []}
 
 id = 1
 
@@ -26,6 +28,7 @@ for i in range(1, n + 1):
             circumference = cv2.arcLength(contour, True)
             roundness = (4 * math.pi * area) / (circumference * circumference)
 
+
             res["Id"].append(id)
             res["Area"].append(area)
             res["Circumference"].append(circumference)
@@ -33,10 +36,27 @@ for i in range(1, n + 1):
 
             id = id + 1
 
-            M = cv2.moments(contour)
-            cx = int(M['m10']/M['m00']) # 求x坐标
-            cy = int(M['m01']/M['m00']) # 求y坐标
-        
+            if(type == 0):
+                res["Type"].append("deng zhou")
 
+            elif(type == 1):
+                if(roundness >= 0.48):
+                    res["Type"].append("bao zhuang")
+                else:
+                    res["Type"].append("shu zhi")
+
+            elif(type == 2):
+                rect = cv2.minAreaRect(contour)
+                if(rect[1][0] <= rect[1][1]):
+                    aspect_ratio = rect[1][0] / rect[1][1]
+                else:
+                    aspect_ratio = rect[1][1] / rect[1][0]    
+
+                if(aspect_ratio >= 0.55):
+                    res["Type"].append("deng zhou")
+                else:
+                    res["Type"].append("zhu zhuang")
+
+        
 data = pd.DataFrame(res)
 data.to_csv("./Fire-py/feature/grain.csv", index=None)

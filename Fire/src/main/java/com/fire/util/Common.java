@@ -36,9 +36,9 @@ public class Common {
         return table;
     }
 
-    public static void executePy(String py, String exe){
+    public static void executePy(String py, String exe, String parameter){
         try {
-            Process process = Runtime.getRuntime().exec(exe + " " + py);
+            Process process = Runtime.getRuntime().exec(exe + " " + py + " " + parameter);
             //获取结果的同时设置输入流编码格式"gb2312"
             InputStreamReader isr = new InputStreamReader(process.getInputStream(),"gb2312");
             LineNumberReader input = new LineNumberReader(isr);

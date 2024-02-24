@@ -51,7 +51,7 @@ public class ImgController {
     @GetMapping("/seg")
     public Result<?> segMeltZoo() {
         String py = "./Fire-py/seg.py";
-        Common.executePy(py, exe);
+        Common.executePy(py, exe, "");
 
         return Result.success("熔化区分割成功");
     }

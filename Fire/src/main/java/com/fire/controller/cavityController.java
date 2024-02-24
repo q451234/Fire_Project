@@ -33,7 +33,7 @@ public class cavityController {
     @GetMapping("/seg")
     public Result<?> extractCavity() {
         String py = "./Fire-py/cavity.py";
-        Common.executePy(py, exe);
+        Common.executePy(py, exe, "");
         return Result.success("孔洞提取成功");
     }
 
@@ -41,7 +41,7 @@ public class cavityController {
     @GetMapping("/export")
     public Result<?> exportCavity() {
         String py = "./Fire-py/cavity_export.py";
-        Common.executePy(py, exe);
+        Common.executePy(py, exe, "");
         List<List<String>> table = Common.exportTable("./Fire-py/feature/cavity.csv");
         return Result.success(table);
     }
