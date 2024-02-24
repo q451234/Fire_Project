@@ -39,10 +39,13 @@ export default{
       data: box
     });
   },
-  exportGrain(){
+  exportGrain(type){
     return request({
       url: '/grain/export',
       method: 'get',
+      params: { 
+        type: type, 
+      }
     });
   },
   classify(){

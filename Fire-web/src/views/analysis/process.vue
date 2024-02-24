@@ -146,6 +146,7 @@ export default {
 
         showClassfiy: false,
         res: "",
+        type: "",
 
         deg: 0,
 				test: '',
@@ -180,7 +181,7 @@ export default {
         let dic = {0 : "火烧熔痕", 1 : "一次短路熔痕", 2 : "二次短路熔痕"}
         this.$message("处理中")
         imgApi.classify().then(response => {
-          let res = response.data;
+          let r = response.data;
           this.$message({
               message: response.message,
               type: 'success',
@@ -188,7 +189,8 @@ export default {
           });
           
           this.showClassfiy = true
-          this.res = "参考类型 : " + dic[res]
+          this.res = "参考类型 : " + dic[r]
+          this.type = res
         })
       },
       exportMelting(){
@@ -269,7 +271,7 @@ export default {
       },
       exportGrain(){
         this.$message("处理中")
-        imgApi.exportGrain().then(response => {
+        imgApi.exportGrain(this.type).then(response => {
           // 生成示例表格数据
           const tableData = response.data
 
@@ -520,12 +522,16 @@ export default {
           this.fileList = [file]//这一步，是 展示最后一次选择文件
           this.ifSeg = false
           this.showClassfiy = false
+          this.res = ""
+          this.type = ""
         }
       },
       onRemove(file, fileList){
         this.showButton = false
         this.ifSeg = false
         this.showClassfiy = false
+        this.res = ""
+        this.type = ""
       },
       handlePreview(file) {
         this.originImageUrl = file.url;
