@@ -51,7 +51,8 @@ public class grainController {
 
     @ApiOperation(value = "晶粒特征提取")
     @GetMapping("/export")
-    public Result<?> exportGrain(@RequestParam(value = "type") String type) {
+    public Result<?> exportGrain(@RequestParam(value = "type") String type,
+                                 @RequestParam(value = "scale") String scale) {
         if(Objects.equals(type, "")){
             try {
                 String py = "./Fire-py/swin.py";
@@ -72,7 +73,7 @@ public class grainController {
         }
 
         String py = "./Fire-py/grain_export.py";
-        Common.executePy(py, exe, type);
+        Common.executePy(py, exe, type + " " + scale);
         List<List<String>> table = Common.exportTable("./Fire-py/feature/grain.csv");
         return Result.success(table);
     }

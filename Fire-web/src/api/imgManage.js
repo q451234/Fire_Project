@@ -8,10 +8,13 @@ export default{
       data : data,
     });
   },
-  seg(){
+  seg(scale){
     return request({
       url: '/img/seg',
       method: 'get',
+      params: { 
+        scale: scale
+      }
     });
   },
   cavity(){
@@ -20,10 +23,13 @@ export default{
       method: 'get',
     });
   },
-  exportCavity(){
+  exportCavity(scale){
     return request({
       url: '/cavity/export',
       method: 'get',
+      params: { 
+        scale: scale
+      }
     });
   },
   grain(){
@@ -39,12 +45,13 @@ export default{
       data: box
     });
   },
-  exportGrain(type){
+  exportGrain(type, scale){
     return request({
       url: '/grain/export',
       method: 'get',
       params: { 
         type: type, 
+        scale: scale
       }
     });
   },

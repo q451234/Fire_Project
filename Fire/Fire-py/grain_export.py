@@ -3,6 +3,10 @@ import cv2, math, sys
 import pandas as pd
 
 type = int(sys.argv[1])
+scale = int(sys.argv[2])
+scaleImg = cv2.imread("./Fire-py/img/scale.jpg", 0)
+h,w = scaleImg.shape
+s = int(scale) / int(w)
 
 masks = cv2.imread("./Fire-py/img/grain_mask.png", -1)
 
@@ -30,8 +34,8 @@ for i in range(1, n + 1):
 
 
             res["Id"].append(id)
-            res["Area"].append(area)
-            res["Circumference"].append(circumference)
+            res["Area"].append(area * s * s)
+            res["Circumference"].append(circumference * s)
             res["Roundness"].append(roundness)
 
             id = id + 1

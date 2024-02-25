@@ -1,9 +1,14 @@
 import numpy as np
-import torch
+import torch,sys
 from networks.vit_seg_modeling import VisionTransformer as ViT_seg
 from networks.vit_seg_modeling import CONFIGS as CONFIGS_ViT_seg
 import cv2
 from PIL import Image
+
+scale = int(sys.argv[1])
+scaleImg = cv2.imread("./Fire-py/img/scale.jpg", 0)
+h,w = scaleImg.shape
+s = int(scale) / int(w)
 
 def resize_(image, output_size):
     w = output_size[0]
@@ -86,8 +91,8 @@ area = cv2.contourArea(contour)
 circumference = cv2.arcLength(contour, True)
 roundness = (4 * math.pi * area) / (circumference * circumference)
 
-res["Area"].append(area)
-res["Circumference"].append(circumference)
+res["Area"].append(area * s * s)
+res["Circumference"].append(circumference * s)
 res["Roundness"].append(roundness)
 
 data = pd.DataFrame(res)

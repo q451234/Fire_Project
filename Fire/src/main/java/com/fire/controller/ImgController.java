@@ -49,10 +49,9 @@ public class ImgController {
 
     @ApiOperation(value = "熔化区分割")
     @GetMapping("/seg")
-    public Result<?> segMeltZoo() {
+    public Result<?> segMeltZoo(@RequestParam(value = "scale") String scale) {
         String py = "./Fire-py/seg.py";
-        Common.executePy(py, exe, "");
-
+        Common.executePy(py, exe, scale);
         return Result.success("熔化区分割成功");
     }
 

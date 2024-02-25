@@ -38,7 +38,6 @@
       <el-button n v-if = "showButton" size="medium" type="warning" @click="grain" icon = "el-icon-crop">晶粒提取</el-button>
     </div>
 
-
     <el-dialog :visible.sync="originVisible">
         <img width="100%" :src="originImageUrl" alt="">
     </el-dialog>
@@ -168,6 +167,8 @@ export default {
         scale: '',
         showScale: false,
         fileListScale: [],
+        noScaleImg: false,
+        noScale: false,
 
         deg: 0,
 				test: '',
@@ -232,33 +233,49 @@ export default {
           
           this.showClassfiy = true
           this.res = "参考类型 : " + dic[r]
-          this.type = res
+          this.type = r
         })
       },
       exportMelting(){
-        this.$message("处理中")
-        imgApi.exportMelting().then(response => {
-          // 生成示例表格数据
-          const tableData = response.data
+        if(this.scale == ''){
+          this.$message({
+              message: "请输入比例尺长度",
+              type: 'error',
+              customClass:'mzindex'
+          });
+        }
+        else if(this.fileListScale.length == 0){
+          this.$message({
+              message: "请上传比例尺图片",
+              type: 'error',
+              customClass:'mzindex'
+          });
+        }
+        else{
+          this.$message("处理中")
+          imgApi.exportMelting().then(response => {
+            // 生成示例表格数据
+            const tableData = response.data
 
-          // 将表格数据转换为CSV格式
-          const csvContent = tableData.map(row => row.join(',')).join('\n');
-          
-          // 创建一个Blob对象，用于存储CSV内容
-          const blob = new Blob([csvContent], { type: 'text/csv' });
+            // 将表格数据转换为CSV格式
+            const csvContent = tableData.map(row => row.join(',')).join('\n');
+            
+            // 创建一个Blob对象，用于存储CSV内容
+            const blob = new Blob([csvContent], { type: 'text/csv' });
 
-          // 创建下载链接
-          const link = document.createElement('a');
-          link.href = window.URL.createObjectURL(blob);
-          link.download = 'melting.csv';
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'melting.csv';
 
-          // 将链接添加到DOM中，并模拟点击以触发下载
-          document.body.appendChild(link);
-          link.click();
+            // 将链接添加到DOM中，并模拟点击以触发下载
+            document.body.appendChild(link);
+            link.click();
 
-          // 清理创建的链接
-          document.body.removeChild(link);
-        });
+            // 清理创建的链接
+            document.body.removeChild(link);
+          });          
+        }
       },
       close(){
         this.segVisible = false,
@@ -312,29 +329,45 @@ export default {
         this.grainVisible = true;
       },
       exportGrain(){
-        this.$message("处理中")
-        imgApi.exportGrain(this.type).then(response => {
-          // 生成示例表格数据
-          const tableData = response.data
+        if(this.scale == ''){
+          this.$message({
+              message: "请输入比例尺长度",
+              type: 'error',
+              customClass:'mzindex'
+          });
+        }
+        else if(this.fileListScale.length == 0){
+          this.$message({
+              message: "请上传比例尺图片",
+              type: 'error',
+              customClass:'mzindex'
+          });
+        }
+        else{
+          this.$message("处理中")
+          imgApi.exportGrain(this.type, this.scale).then(response => {
+            // 生成示例表格数据
+            const tableData = response.data
 
-          // 将表格数据转换为CSV格式
-          const csvContent = tableData.map(row => row.join(',')).join('\n');
-          
-          // 创建一个Blob对象，用于存储CSV内容
-          const blob = new Blob([csvContent], { type: 'text/csv' });
+            // 将表格数据转换为CSV格式
+            const csvContent = tableData.map(row => row.join(',')).join('\n');
+            
+            // 创建一个Blob对象，用于存储CSV内容
+            const blob = new Blob([csvContent], { type: 'text/csv' });
 
-          // 创建下载链接
-          const link = document.createElement('a');
-          link.href = window.URL.createObjectURL(blob);
-          link.download = 'grain.csv';
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'grain.csv';
 
-          // 将链接添加到DOM中，并模拟点击以触发下载
-          document.body.appendChild(link);
-          link.click();
+            // 将链接添加到DOM中，并模拟点击以触发下载
+            document.body.appendChild(link);
+            link.click();
 
-          // 清理创建的链接
-          document.body.removeChild(link);
-        });
+            // 清理创建的链接
+            document.body.removeChild(link);
+          });          
+        }
       },
       grain_area(){
         if(this.boxArray.length == 0){
@@ -495,10 +528,9 @@ export default {
         this.b_i = i;
       },
 
-
       segment() {
         this.$message("处理中")
-        imgApi.seg().then(response => {
+        imgApi.seg(this.scale).then(response => {
           this.$message({
             message: response.message,
             type: 'success',
@@ -534,29 +566,45 @@ export default {
         this.ifSeg = true
       },
       exportCavity(){
-        this.$message("处理中")
-        imgApi.exportCavity().then(response => {
-          // 生成示例表格数据
-          const tableData = response.data
+        if(this.scale == ''){
+          this.$message({
+              message: "请输入比例尺长度",
+              type: 'error',
+              customClass:'mzindex'
+          });
+        }
+        else if(this.fileListScale.length == 0){
+          this.$message({
+              message: "请上传比例尺图片",
+              type: 'error',
+              customClass:'mzindex'
+          });
+        }
+        else{
+          this.$message("处理中")
+          imgApi.exportCavity(this.scale).then(response => {
+            // 生成示例表格数据
+            const tableData = response.data
 
-          // 将表格数据转换为CSV格式
-          const csvContent = tableData.map(row => row.join(',')).join('\n');
-          
-          // 创建一个Blob对象，用于存储CSV内容
-          const blob = new Blob([csvContent], { type: 'text/csv' });
+            // 将表格数据转换为CSV格式
+            const csvContent = tableData.map(row => row.join(',')).join('\n');
+            
+            // 创建一个Blob对象，用于存储CSV内容
+            const blob = new Blob([csvContent], { type: 'text/csv' });
 
-          // 创建下载链接
-          const link = document.createElement('a');
-          link.href = window.URL.createObjectURL(blob);
-          link.download = 'cavity.csv';
+            // 创建下载链接
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'cavity.csv';
 
-          // 将链接添加到DOM中，并模拟点击以触发下载
-          document.body.appendChild(link);
-          link.click();
+            // 将链接添加到DOM中，并模拟点击以触发下载
+            document.body.appendChild(link);
+            link.click();
 
-          // 清理创建的链接
-          document.body.removeChild(link);
-        });
+            // 清理创建的链接
+            document.body.removeChild(link);
+          });          
+        }
       },
 
       onChange(file, fileList) {
@@ -574,6 +622,7 @@ export default {
         this.showClassfiy = false
         this.res = ""
         this.type = ""
+        this.scale = ""
       },
       handlePreview(file) {
         this.originImageUrl = file.url;

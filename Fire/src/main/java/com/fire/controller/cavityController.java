@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.BufferedReader;
@@ -39,9 +40,9 @@ public class cavityController {
 
     @ApiOperation(value = "孔洞特征导出")
     @GetMapping("/export")
-    public Result<?> exportCavity() {
+    public Result<?> exportCavity(@RequestParam(value = "scale") String scale) {
         String py = "./Fire-py/cavity_export.py";
-        Common.executePy(py, exe, "");
+        Common.executePy(py, exe, scale);
         List<List<String>> table = Common.exportTable("./Fire-py/feature/cavity.csv");
         return Result.success(table);
     }

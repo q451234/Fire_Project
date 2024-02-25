@@ -1,5 +1,10 @@
-import cv2,math
+import cv2,math,sys
 import pandas as pd
+
+scale = int(sys.argv[1])
+scaleImg = cv2.imread("./Fire-py/img/scale.jpg", 0)
+h,w = scaleImg.shape
+s = int(scale) / int(w)
 
 cavity_path = "./Fire-py/img/cavity.jpg"
 
@@ -20,8 +25,8 @@ for idx in range(len(contours)):
         roundness = (4 * math.pi * area) / (circumference * circumference)
 
         res["Id"].append(id)
-        res["Area"].append(area)
-        res["Circumference"].append(circumference)
+        res["Area"].append(area * s * s)
+        res["Circumference"].append(circumference * s)
         res["Roundness"].append(roundness)
 
         id = id + 1
