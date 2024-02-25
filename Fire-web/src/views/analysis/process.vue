@@ -14,6 +14,23 @@
       <el-tag v-show="showClassfiy" type="danger" style="margin-left: 100px;" ref="classify" :key="res">{{res}}</el-tag>
     </el-upload> 
 
+    <div v-show="showScale">    
+      <el-input v-model="scale" placeholder="请输入比例尺长度" oninput="value=value.replace(/\D|^0/g, '')" style="width: 150px; margin-top: 10px;"></el-input>
+      um
+
+      <el-upload
+        class="upload-demo"
+        action="https://jsonplaceholder.typicode.com/posts/"
+        :on-change="handleChangeScale"
+        :on-remove="handleRemoveScale"
+        :limit="3"
+        :file-list="fileListScale"
+        :http-request="scaleUpload"
+        style="margin-top: 10px;">
+        <el-button size="small" type="primary">点击上传比例尺图片</el-button>
+      </el-upload>
+    </div>
+
     <div style="padding-top: 15px;">
       <el-button n v-if = "showButton" size="medium" type="danger" @click="classify" icon = "el-icon-camera">类型识别</el-button>
       <el-button n v-if = "showButton" size="medium" type="info" @click="segment" icon = "el-icon-scissors">熔化区分割</el-button>
@@ -148,6 +165,10 @@ export default {
         res: "",
         type: "",
 
+        scale: '',
+        showScale: false,
+        fileListScale: [],
+
         deg: 0,
 				test: '',
 				zoomInShow: false,
@@ -177,6 +198,27 @@ export default {
       };
     },
     methods: {
+      scaleUpload(f){
+        let params = new FormData()
+        // //注意在这里一个坑f.file
+        params.append("file", f.file);
+        imgApi.uploadScale(params).then(response => {
+          this.$message({
+            message: response.message,
+            type: 'success',
+            customClass:'mzindex'
+          });
+        })
+        this.showButton = true
+      },
+      handleChangeScale(file, fileList){
+        if(fileList.length > 0){
+          this.fileListScale = [file]
+        }
+      },
+      handleRemoveScale(file, fileList){
+        this.showButton = false
+      },
       classify(){
         let dic = {0 : "火烧熔痕", 1 : "一次短路熔痕", 2 : "二次短路熔痕"}
         this.$message("处理中")
@@ -527,7 +569,7 @@ export default {
         }
       },
       onRemove(file, fileList){
-        this.showButton = false
+        this.showScale = false
         this.ifSeg = false
         this.showClassfiy = false
         this.res = ""
@@ -541,14 +583,14 @@ export default {
         let params = new FormData()
         // //注意在这里一个坑f.file
         params.append("file", f.file);
-        imgApi.upload(params).then(response => {
+        imgApi.uploadImg(params).then(response => {
           this.$message({
             message: response.message,
             type: 'success',
             customClass:'mzindex'
           });
         })
-        this.showButton = true
+        this.showScale = true
       },
 
       // 鼠标滚轮滚动实现图片放大缩小 

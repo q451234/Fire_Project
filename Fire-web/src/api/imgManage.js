@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 export default{
-  upload(data){
+  uploadImg(data){
     return request({
-      url: '/img/upload',
+      url: '/img/uploadImg',
       method: 'post',
       data : data,
     });
@@ -58,6 +58,13 @@ export default{
     return request({
       url: '/img/export',
       method: 'get',
+    });
+  },
+  uploadScale(data){
+    return request({
+      url: '/img/uploadScale',
+      method: 'post',
+      data : data,
     });
   }
 }

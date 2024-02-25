@@ -28,8 +28,8 @@ public class ImgController {
     private String exe;
 
     @ApiOperation(value = "返回前端发送来的图片")
-    @PostMapping("/upload")
-    public Result<?> returnImg(@RequestBody MultipartFile file) {
+    @PostMapping("/uploadImg")
+    public Result<?> uploadImg(@RequestBody MultipartFile file) {
         File directory = new File("");//参数为空
         String path =directory.getAbsolutePath();
 
@@ -84,5 +84,25 @@ public class ImgController {
     public Result<?> exportMelting() {
         List<List<String>> table = Common.exportTable("./Fire-py/feature/melting.csv");
         return Result.success(table);
+    }
+
+    @ApiOperation(value = "返回前端发送来的图片")
+    @PostMapping("/uploadScale")
+    public Result<?> returnScale(@RequestBody MultipartFile file) {
+        File directory = new File("");//参数为空
+        String path =directory.getAbsolutePath();
+
+        String originalFilename = file.getOriginalFilename();
+
+        assert originalFilename != null;
+
+        try {
+            //将文件保存指定目录
+            file.transferTo(new File(path + "\\Fire-py\\img\\scale.jpg"));
+            return Result.success("图片传输成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Result.fail(Constant.FAIL_CODE_4,"图片上传错误");
     }
 }
