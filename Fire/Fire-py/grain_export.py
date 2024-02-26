@@ -10,7 +10,7 @@ s = int(scale) / int(w)
 
 masks = cv2.imread("./Fire-py/img/grain_mask.png", -1)
 
-res = {"Id": [],"Area": [], "Circumference": [], "Roundness": [], "Type" : []}
+res = {"编号": [],"面积(um²)": [], "周长(um)": [], "圆度": [], "参考类型" : []}
 
 id = 1
 
@@ -33,21 +33,21 @@ for i in range(1, n + 1):
             roundness = (4 * math.pi * area) / (circumference * circumference)
 
 
-            res["Id"].append(id)
-            res["Area"].append(area * s * s)
-            res["Circumference"].append(circumference * s)
-            res["Roundness"].append(roundness)
+            res["编号"].append(id)
+            res["面积(um²)"].append(area * s * s)
+            res["周长(um)"].append(circumference * s)
+            res["圆度"].append(roundness)
 
             id = id + 1
 
             if(type == 0):
-                res["Type"].append("deng zhou")
+                res["参考类型"].append("等轴晶")
 
             elif(type == 1):
                 if(roundness >= 0.48):
-                    res["Type"].append("bao zhuang")
+                    res["参考类型"].append("胞状晶")
                 else:
-                    res["Type"].append("shu zhi")
+                    res["参考类型"].append("树枝晶")
 
             elif(type == 2):
                 rect = cv2.minAreaRect(contour)
@@ -57,9 +57,9 @@ for i in range(1, n + 1):
                     aspect_ratio = rect[1][1] / rect[1][0]    
 
                 if(aspect_ratio >= 0.55):
-                    res["Type"].append("deng zhou")
+                    res["参考类型"].append("等轴晶")
                 else:
-                    res["Type"].append("zhu zhuang")
+                    res["参考类型"].append("柱状晶")
 
         
 data = pd.DataFrame(res)

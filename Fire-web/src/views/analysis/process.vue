@@ -261,12 +261,12 @@ export default {
             const csvContent = tableData.map(row => row.join(',')).join('\n');
             
             // 创建一个Blob对象，用于存储CSV内容
-            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv' });
 
             // 创建下载链接
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.download = 'melting.csv';
+            link.download = '熔化区特征.csv';
 
             // 将链接添加到DOM中，并模拟点击以触发下载
             document.body.appendChild(link);
@@ -353,12 +353,12 @@ export default {
             const csvContent = tableData.map(row => row.join(',')).join('\n');
             
             // 创建一个Blob对象，用于存储CSV内容
-            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv' });
 
             // 创建下载链接
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.download = 'grain.csv';
+            link.download = '晶粒特征.csv';
 
             // 将链接添加到DOM中，并模拟点击以触发下载
             document.body.appendChild(link);
@@ -543,7 +543,7 @@ export default {
       cavity() {
         this.$message("处理中")
         if(!this.ifSeg){
-          imgApi.seg().then(response => {
+          imgApi.seg(this.scale).then(response => {
             imgApi.cavity().then(response => {
               this.$message({
                 message: response.message,
@@ -590,12 +590,12 @@ export default {
             const csvContent = tableData.map(row => row.join(',')).join('\n');
             
             // 创建一个Blob对象，用于存储CSV内容
-            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv' });
 
             // 创建下载链接
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
-            link.download = 'cavity.csv';
+            link.download = '孔洞特征.csv';
 
             // 将链接添加到DOM中，并模拟点击以触发下载
             document.body.appendChild(link);

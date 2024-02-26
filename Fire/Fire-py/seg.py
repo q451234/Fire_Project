@@ -84,16 +84,16 @@ cv2.imwrite("./Fire-py/img/seg.jpg", mask * origin_img)
 import pandas as pd
 import math
 
-res = {"Area": [], "Circumference": [], "Roundness": []}
+res = {"面积(um²)": [], "周长(um)": [], "圆度": []}
 
 contour = contours[0]
 area = cv2.contourArea(contour)
 circumference = cv2.arcLength(contour, True)
 roundness = (4 * math.pi * area) / (circumference * circumference)
 
-res["Area"].append(area * s * s)
-res["Circumference"].append(circumference * s)
-res["Roundness"].append(roundness)
+res["面积(um²)"].append(area * s * s)
+res["周长(um)"].append(circumference * s)
+res["圆度"].append(roundness)
 
 data = pd.DataFrame(res)
 data.to_csv("./Fire-py/feature/melting.csv", index=None)
