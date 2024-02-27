@@ -28,6 +28,7 @@
         :http-request="scaleUpload"
         style="margin-top: 10px;">
         <el-button size="small" type="primary">点击上传比例尺图片</el-button>
+        <div slot="tip" class="el-upload__tip">比例尺图片宽为比例尺长</div>
       </el-upload>
     </div>
 
