@@ -50,8 +50,10 @@ public class ImgController {
     @ApiOperation(value = "熔化区分割")
     @GetMapping("/seg")
     public Result<?> segMeltZoo(@RequestParam(value = "scale") String scale) {
+//        long start = System.currentTimeMillis();
         String py = "./Fire-py/seg.py";
         Common.executePy(py, exe, scale);
+//        System.out.println("cost time: " + (System.currentTimeMillis() - start) + " ms");
         return Result.success("熔化区分割成功");
     }
 

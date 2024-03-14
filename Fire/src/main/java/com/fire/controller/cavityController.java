@@ -33,8 +33,10 @@ public class cavityController {
     @ApiOperation(value = "孔洞提取")
     @GetMapping("/seg")
     public Result<?> extractCavity() {
+//        long start = System.currentTimeMillis();
         String py = "./Fire-py/cavity.py";
         Common.executePy(py, exe, "");
+//        System.out.println("cost time: " + (System.currentTimeMillis() - start) + " ms");
         return Result.success("孔洞提取成功");
     }
 

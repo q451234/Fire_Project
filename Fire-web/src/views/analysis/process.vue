@@ -275,7 +275,12 @@ export default {
 
             // 清理创建的链接
             document.body.removeChild(link);
-          });          
+          });
+          this.$message({
+            message: "导出成功",
+            type: 'success',
+            customClass:'mzindex'
+          });           
         }
       },
       close(){
@@ -367,7 +372,12 @@ export default {
 
             // 清理创建的链接
             document.body.removeChild(link);
-          });          
+          });
+          this.$message({
+            message: "导出成功",
+            type: 'success',
+            customClass:'mzindex'
+          });           
         }
       },
       grain_area(){
@@ -604,6 +614,11 @@ export default {
 
             // 清理创建的链接
             document.body.removeChild(link);
+          });
+          this.$message({
+            message: "导出成功",
+            type: 'success',
+            customClass:'mzindex'
           });          
         }
       },
