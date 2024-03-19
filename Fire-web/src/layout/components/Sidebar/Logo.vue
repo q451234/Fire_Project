@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: '火场熔痕特征提取系统',
+      title: '火场熔痕特征提取与智能分析系统',
       logo: 'https://wpimg.wallstcn.com/69a1c46c-eb1c-4b46-8bd4-e9e686ef5251.png'
     }
   }
