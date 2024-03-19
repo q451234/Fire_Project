@@ -1,0 +1,24 @@
+opencv-python==4.8.1.78
+pandas==2.0.3
+numpy==1.24.3
+Pillow==9.4.0
+
+
+torchvision
+torch
+
+# 根据显卡设置（4070）
+# torch==2.1.0+cu121
+# torchvision==0.16.0+cu121
+
+qtpy
+numba>=0.43.1
+scipy
+opencv-python-headless
+pyqtgraph>=0.11.0rc0
+natsort
+google-cloud-storage
+tqdm
+tifffile
+fastremap
+roifile
